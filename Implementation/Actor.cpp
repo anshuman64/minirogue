@@ -69,7 +69,7 @@ GameObject* Actor::getOverGameObject() {
 
 void Actor::changeHP(int delta) {
   m_hp += delta;
-  m_hp = (m_hp > MAX_STATS ? MAX_STATS : m_hp);
+  m_hp = (m_hp > m_maxHP ? m_maxHP : m_hp);
   m_hp = (m_hp < 0 ? 0 : m_hp);
 }
 

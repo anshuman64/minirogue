@@ -46,7 +46,7 @@ public:
 
   // TODO: update right probability
   GameObject* dropGameObject() {
-    if (!isOverGameObject() and trueWithProbability(1)) {
+    if (!isOverGameObject() and trueWithProbability(0.3333)) {
       Weapon* droppedObject = trueWithProbability(0.5) ? (Weapon*)(new MagicAxe(getDungeon())) : (Weapon*)(new MagicFangs(getDungeon()));
       return droppedObject; // deleted in Dungeon
     }

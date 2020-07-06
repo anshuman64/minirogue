@@ -35,6 +35,10 @@ public:
   // * Actions
   // ******************************
   void calculateMove() {
+    if (trueWithProbability(0.1)) {
+      changeHP(1);
+    }
+    
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
     }

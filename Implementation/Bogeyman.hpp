@@ -42,9 +42,8 @@ public:
     }
   }
 
-  // TODO: update right probability
   GameObject* dropGameObject() {
-    if (!isOverGameObject() and trueWithProbability(1)) {
+    if (!isOverGameObject() and trueWithProbability(0.11)) {
       return new MagicAxe(getDungeon()); // deleted in Dungeon
     }
     

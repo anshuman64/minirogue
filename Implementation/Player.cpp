@@ -34,6 +34,11 @@ Player::~Player() {
 // ******************************
 
 void Player::calculateMove(char input) {
+  // Regain hit points
+  if (trueWithProbability(0.1)) {
+    changeHP(1);
+  }
+  
   int curRow = getRowPosition();
   int curCol = getColPosition();
   int nextRow = curRow;
