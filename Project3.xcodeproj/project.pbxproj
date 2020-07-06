@@ -53,6 +53,7 @@
 		5BEA012224ADA270001AEB75 /* Object.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
 		5BEA012524AE8FD5001AEB75 /* Wall.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Wall.hpp; sourceTree = "<group>"; };
 		5BEA012824AF92F8001AEB75 /* Room.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Room.hpp; sourceTree = "<group>"; };
+		5BEA013324B39F8B001AEB75 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 		5BEA00BE24ABD2D3001AEB75 = {
 			isa = PBXGroup;
 			children = (
+				5BEA013324B39F8B001AEB75 /* .gitignore */,
 				5BEA00C924ABD2D3001AEB75 /* Implementation */,
 				5BEA00C824ABD2D3001AEB75 /* Products */,
 			);
