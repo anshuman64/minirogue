@@ -10,8 +10,7 @@
 
 #include "Dungeon.hpp"
 #include "Player.hpp"
-#include "Room.hpp"
-#include "Wall.hpp"
+#include "Object.hpp"
 #include "Bogeyman.hpp"
 #include "Weapon.hpp"
 #include "utilities.hpp"
@@ -143,8 +142,9 @@ void Dungeon::createGameObjects() {
   int numGameObjects = randInt(2) + 2;
   
   for (int i = 0; i < numGameObjects; i++) {
-    m_gameObjects.push_back(new Weapon(this, "Long Sword", 3, 2, "slashes"));
-    setObjectPosition(m_gameObjects[i]);
+    Weapon* addWeapon = generateRandomWeapon();
+    m_gameObjects.push_back(addWeapon);
+    setObjectPosition(addWeapon);
   }
   
   // Creates stairs to next level
@@ -175,6 +175,19 @@ void Dungeon::setObjectPosition(Object* object) {
       return;
     }
   }
+}
+
+Weapon* Dungeon::generateRandomWeapon() {
+  switch (randInt(2)) {
+    case 0:
+      return new Mace(this);
+      break;
+    case 1:
+      return new LongSword(this);
+      break;
+  }
+  
+  return new ShortSword(this);
 }
 
 

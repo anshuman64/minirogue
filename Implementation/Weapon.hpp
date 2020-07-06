@@ -38,10 +38,44 @@ public:
     return m_actionString;
   }
   
+  virtual bool isMagicFangs() {
+    return false;
+  }
+  
 private:
   int    m_damage;
   int    m_dexBonus;
   string m_actionString;
+};
+
+
+class ShortSword : public Weapon {
+public:
+  ShortSword(Dungeon* dungeon) : Weapon(dungeon, "Short Sword", 2, 0, "slashes") {}
+};
+
+class Mace : public Weapon {
+public:
+  Mace(Dungeon* dungeon) : Weapon(dungeon, "Mace", 2, 0, "swings") {}
+};
+
+class LongSword : public Weapon {
+public:
+  LongSword(Dungeon* dungeon) : Weapon(dungeon, "Long Sword", 4, 2, "swings") {}
+};
+
+class MagicAxe : public Weapon {
+public:
+  MagicAxe(Dungeon* dungeon) : Weapon(dungeon, "Magic Axe", 5, 5, "chops") {}
+};
+
+class MagicFangs : public Weapon {
+public:
+  MagicFangs(Dungeon* dungeon) : Weapon(dungeon, "Magic Fangs", 3, 2, "strikes") {}
+  
+  virtual bool isMagicFangs() {
+    return true;
+  }
 };
 
 #endif /* Weapon_hpp */

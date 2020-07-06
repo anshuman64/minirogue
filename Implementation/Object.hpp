@@ -50,4 +50,16 @@ private:
   char     m_symbol;
 };
 
+
+class Wall : public Object {
+public:
+  Wall(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, '#', "Wall", rowPos, colPos) {}
+};
+
+
+class Room : public Object {
+public:
+  Room(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, ' ', "Room", rowPos, colPos) {}
+};
+
 #endif /* Object_hpp */

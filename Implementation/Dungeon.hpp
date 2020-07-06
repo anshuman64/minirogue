@@ -25,6 +25,7 @@ class Wall;
 class Actor;
 class Player;
 class Monster;
+class Weapon;
 
 class Dungeon {
 public:
@@ -87,7 +88,8 @@ private:
   void resetCell(Object* object);
   
   // Helpers - Other
-  void setObjectPosition(Object* object);
+  void    setObjectPosition(Object* object);
+  Weapon* generateRandomWeapon();
 };
 
 

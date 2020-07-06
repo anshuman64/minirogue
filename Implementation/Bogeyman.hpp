@@ -23,7 +23,7 @@ public:
   // ******************************
   
   Bogeyman(Dungeon* dungeon) : Monster(dungeon, 'B', "Bogeyman", randInt(6)+5, randInt(2)+2, randInt(2)+2, 2) {
-    setWeapon(new Weapon(dungeon, "Short Sword", 2, 0, "slashes"));
+    setWeapon(new ShortSword(dungeon));
   }
 
   ~Bogeyman() {
@@ -44,7 +44,7 @@ public:
 
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(0.1)) {
-      return new Weapon(getDungeon(), "Magic Axe", 5, 5, "chops");
+      return new MagicAxe(getDungeon()); // deleted in Dungeon
     }
     
     return nullptr;

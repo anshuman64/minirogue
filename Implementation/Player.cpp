@@ -15,7 +15,7 @@
 // * Constructor
 // ******************************
 Player::Player(Dungeon* dungeon) : Actor(dungeon, '@', "Player", 20, 2, 2, 2), is_godMode(false) {
-  Weapon* startWeapon = new Weapon(dungeon, "Short Sword", 2, 0, "slashes");
+  Weapon* startWeapon = new ShortSword(dungeon);
   m_inventory.push_back(startWeapon);
   m_weapons.push_back(startWeapon);
   setWeapon(startWeapon);
