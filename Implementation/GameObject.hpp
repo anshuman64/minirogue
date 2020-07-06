@@ -15,11 +15,19 @@
 
 class GameObject : public Object {
 public:
-  // Constructor
+  // ******************************
+  // * Constructor
+  // ******************************
+  GameObject(Dungeon* dungeon, char symbol, string name) : Object(dungeon, symbol, name) {}
+  
   GameObject(Dungeon* dungeon, char symbol, string name, string description) : Object(dungeon, symbol, name), m_description(description) {}
+  
   virtual ~GameObject() {}
   
-  // Accessors - Booleans
+  
+  // ******************************
+  // * Accessors - Booleans
+  // ******************************
   bool isWeapon() {
     return getSymbol() == ')';
   }
@@ -32,7 +40,14 @@ public:
     return getSymbol() == '&';
   }
   
-  // Accessors - Other
+  bool isStairs() {
+    return getSymbol() == '>';
+  }
+  
+  
+  // ******************************
+  // * Accessors - Other
+  // ******************************
   string getDescription() {
     return m_description;
   }

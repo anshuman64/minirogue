@@ -20,9 +20,10 @@ public:
   virtual ~Monster() {}
   
   // Actions
-  virtual void calculateMove() = 0;
-  void         attemptMove();
-  int          stepsToPlayer();
+  virtual void        calculateMove() = 0;
+  void                attemptMove();
+  int                 stepsToPlayer();
+  virtual GameObject* dropGameObject() = 0;
   
 private:
   // Helpers

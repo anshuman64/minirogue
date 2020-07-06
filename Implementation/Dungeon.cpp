@@ -24,7 +24,12 @@ using namespace std;
 // ******************************
 
 Dungeon::Dungeon() : m_level(0), is_gameOver(false) {
-  createLevel();
+  // WARNING: Has to be called in this order!
+  createRooms();
+  createWalls();
+  createMonsters();
+  createGameObjects();
+  createPlayer();
 }
 
 Dungeon::~Dungeon() {
@@ -38,13 +43,7 @@ Dungeon::~Dungeon() {
     delete m_walls[i];
   }
   
-  for (int i = 0; i < m_monsters.size(); i++) {
-    delete m_monsters[i];
-  }
-  
-  for (int i = 0; i < m_gameObjects.size(); i++) {
-    delete m_gameObjects[i];
-  }
+  resetLevel();
   
   delete m_player;
 }
@@ -104,15 +103,6 @@ bool Dungeon::isGameObject(int rowPos, int colPos) {
 // * Helpers - Create Level
 // ******************************
 
-// WARNING: Has to be called in this order!
-void Dungeon::createLevel() {
-  createRooms();
-  createWalls();
-  createPlayer();
-  createMonsters();
-  createGameObjects();
-}
-
 void Dungeon::createRooms() {
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
@@ -157,10 +147,17 @@ void Dungeon::createGameObjects() {
     setObjectPosition(m_gameObjects[i]);
   }
   
+  // Creates stairs to next level
+  GameObject* stairs = new GameObject(this, '>', "Stairs");
+  m_gameObjects.push_back(stairs);
+  setObjectPosition(stairs);
+  
   // Creates golden idol
-  GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol", "Idol with magic powers. Pick up to win the game!");
-  m_gameObjects.push_back(goldenIdol);
-  setObjectPosition(goldenIdol);
+  if (m_level == 2) {
+    GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol");
+    m_gameObjects.push_back(goldenIdol);
+    setObjectPosition(goldenIdol);
+  }
 }
 
 void Dungeon::setObjectPosition(Object* object) {
@@ -182,7 +179,41 @@ void Dungeon::setObjectPosition(Object* object) {
 
 
 // ******************************
-// * Update and Display Level
+// * Reset & Next Level
+// ******************************
+
+void Dungeon::nextLevel() {
+  resetLevel();
+  m_level++;
+  
+  createMonsters();
+  createGameObjects();
+  setObjectPosition(m_player);
+}
+
+void Dungeon::resetLevel() {
+  while (!m_monsters.empty()) {
+    resetCell(m_monsters.back());
+    m_monsters.pop_back();
+  }
+  
+  while (!m_gameObjects.empty()) {
+    resetCell(m_gameObjects.back());
+    m_gameObjects.pop_back();
+  }
+  
+  resetCell(m_player);
+}
+
+void Dungeon::resetCell(Object* object) {
+  int objectRowPos = object->getRowPosition();
+  int objectColPos = object->getColPosition();
+  m_maze[objectRowPos][objectColPos] = m_rooms[objectRowPos][objectColPos];
+}
+
+
+// ******************************
+// * Update Cells (from Actor movement)
 // ******************************
 
 void Dungeon::updateCurrentCell(Actor* actor, int curRow, int curCol) {
@@ -197,15 +228,10 @@ void Dungeon::updateNextCell(Actor* actor, int nextRow, int nextCol) {
   m_maze[nextRow][nextCol] = actor;
 }
 
-void Dungeon::moveMonsters(){
-  for (int i = 0; i < m_monsters.size(); i++) {
-    m_monsters[i]->calculateMove();
-    
-    if (is_gameOver) {
-      return;
-    }
-  }
-}
+
+// ******************************
+// * Display Level & Actions
+// ******************************
 
 void Dungeon::displayLevel() {
   clearScreen();
@@ -217,11 +243,6 @@ void Dungeon::displayLevel() {
   }
   cout << endl;
 }
-
-
-// ******************************
-// * Display Actions
-// ******************************
 
 void Dungeon::displayActions() {
   while(!m_actions.empty()) {
@@ -238,8 +259,18 @@ void Dungeon::addAction(string action) {
 
 
 // ******************************
-// * Mutators - Destroy Objects
+// * Monster Actions
 // ******************************
+
+void Dungeon::moveMonsters(){
+  for (int i = 0; i < m_monsters.size(); i++) {
+    m_monsters[i]->calculateMove();
+    
+    if (is_gameOver) {
+      return;
+    }
+  }
+}
 
 void Dungeon::destroyMonster(Monster* monster) {
   addAction(monster->getName() + " is defeated!");
@@ -248,13 +279,22 @@ void Dungeon::destroyMonster(Monster* monster) {
     if (m_monsters[i] == monster) {
       int rowPos = monster->getRowPosition();
       int colPos = monster->getColPosition();
-      m_maze[rowPos][colPos] = m_rooms[rowPos][colPos];
+      
+      // Check if monster drops game object
+      GameObject* droppedGameObject = monster->dropGameObject();
+      if (droppedGameObject != nullptr) {
+        m_gameObjects.push_back(droppedGameObject);
+        m_maze[rowPos][colPos] = droppedGameObject;
+      }
+      
+      updateCurrentCell(monster, rowPos, colPos);
       
       m_monsters.erase(m_monsters.begin() + i);
       delete monster;
     }
   }
 }
+
 
 // ******************************
 // * Win/Lose Game

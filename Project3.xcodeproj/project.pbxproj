@@ -13,7 +13,6 @@
 		5BEA010B24AD6917001AEB75 /* Actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA010924AD6917001AEB75 /* Actor.cpp */; };
 		5BEA010E24AD6920001AEB75 /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA010C24AD6920001AEB75 /* Player.cpp */; };
 		5BEA011124AD6929001AEB75 /* Monster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA010F24AD6929001AEB75 /* Monster.cpp */; };
-		5BEA011D24AD6975001AEB75 /* Bogeyman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA011B24AD6975001AEB75 /* Bogeyman.cpp */; };
 		5BEA012024AD6BD2001AEB75 /* Dungeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA011E24AD6BD2001AEB75 /* Dungeon.cpp */; };
 		5BEA012324ADA270001AEB75 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA012124ADA270001AEB75 /* Object.cpp */; };
 /* End PBXBuildFile section */
@@ -47,7 +46,6 @@
 		5BEA011324AD6952001AEB75 /* GameObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameObject.hpp; sourceTree = "<group>"; };
 		5BEA011624AD695C001AEB75 /* Weapon.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Weapon.hpp; sourceTree = "<group>"; };
 		5BEA011924AD6963001AEB75 /* Scroll.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Scroll.hpp; sourceTree = "<group>"; };
-		5BEA011B24AD6975001AEB75 /* Bogeyman.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bogeyman.cpp; sourceTree = "<group>"; };
 		5BEA011C24AD6975001AEB75 /* Bogeyman.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bogeyman.hpp; sourceTree = "<group>"; };
 		5BEA011E24AD6BD2001AEB75 /* Dungeon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Dungeon.cpp; sourceTree = "<group>"; };
 		5BEA011F24AD6BD2001AEB75 /* Dungeon.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Dungeon.hpp; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 			children = (
 				5BEA010F24AD6929001AEB75 /* Monster.cpp */,
 				5BEA011024AD6929001AEB75 /* Monster.hpp */,
-				5BEA011B24AD6975001AEB75 /* Bogeyman.cpp */,
 				5BEA011C24AD6975001AEB75 /* Bogeyman.hpp */,
 			);
 			name = Monster;
@@ -214,7 +211,6 @@
 				5BEA012324ADA270001AEB75 /* Object.cpp in Sources */,
 				5BEA010324AD1344001AEB75 /* utilities.cpp in Sources */,
 				5BEA010E24AD6920001AEB75 /* Player.cpp in Sources */,
-				5BEA011D24AD6975001AEB75 /* Bogeyman.cpp in Sources */,
 				5BEA011124AD6929001AEB75 /* Monster.cpp in Sources */,
 				5BEA010524AD1451001AEB75 /* main.cpp in Sources */,
 				5BEA010824AD690F001AEB75 /* Game.cpp in Sources */,

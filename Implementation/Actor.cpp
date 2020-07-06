@@ -93,6 +93,7 @@ void Actor::changeDexterity(int delta) {
   m_dexterity = (m_dexterity > MAX_STATS ? MAX_STATS : m_dexterity);
 }
 
+
 // ******************************
 // * Mutators - Other
 // ******************************
@@ -152,7 +153,6 @@ bool Actor::isHit(Actor* attacker, Actor* defender) {
   return false;
 }
 
-// Returns true if player is dead
 void Actor::checkIsDead(Actor* actor) {
   if (actor->getHP() == 0) {
     if (actor->isMonster()) {

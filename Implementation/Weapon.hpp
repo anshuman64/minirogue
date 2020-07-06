@@ -15,10 +15,17 @@
 
 class Weapon : public GameObject {
 public:
-  // Constructor
+  // ******************************
+  // * Constructor
+  // ******************************
+  
   Weapon(Dungeon* dungeon, string name, int damage, int dexBonus, string actionString) : GameObject(dungeon, ')', name, "Damage: +" + to_string(damage) + ", Dexterity: +" + to_string(dexBonus)), m_damage(damage), m_dexBonus(dexBonus), m_actionString(actionString) {}
   
-  // Accessors
+  
+  // ******************************
+  // * Accessors
+  // ******************************
+  
   int getDamage() {
     return m_damage;
   }
@@ -32,8 +39,8 @@ public:
   }
   
 private:
-  int m_damage;
-  int m_dexBonus;
+  int    m_damage;
+  int    m_dexBonus;
   string m_actionString;
 };
 

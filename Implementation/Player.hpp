@@ -21,15 +21,15 @@ public:
   // Actions
   void calculateMove(char input);
   bool pickGameObject();
+  void descendStairs();
   void godMode();
   
-  // Other
+  // Display
   void displayStats();
   void displayInventory();
   void displayWeapons();
   
 private:
-  // Helpers
   bool                is_godMode;
   vector<GameObject*> m_inventory;
   vector<Weapon*>     m_weapons;

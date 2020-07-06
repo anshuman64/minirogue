@@ -46,40 +46,47 @@ public:
   bool isPlayer(int rowPos, int colPos);
   bool isGameObject(int rowPos, int colPos);
     
-  // Display
-  void moveMonsters();
+  // Next & Update Level
+  void nextLevel();
   void updateCurrentCell(Actor* actor, int curRow, int curCol);
   void updateNextCell(Actor* actor, int nextRow, int nextCol);
+  
+  // Display Level U Actions
   void displayLevel();
   void displayActions();
   void addAction(string action);
   
-  // Mutators - Destroy Objects
+  // Monster Actions
+  void moveMonsters();
   void destroyMonster(Monster* monster);
   
   // Win/Lose Game
   void endGame(string descrption);
   
 private:
-  bool is_gameOver;
-  int  m_level;
-  Object* m_maze[NUM_ROWS][NUM_COLS];
+  bool          is_gameOver;
+  int           m_level;
+  Object*       m_maze[NUM_ROWS][NUM_COLS];
   queue<string> m_actions;
   
-  Player*          m_player;
-  Room*            m_rooms[NUM_ROWS][NUM_COLS];
-  vector<Wall*>    m_walls;
-  vector<Monster*> m_monsters;
+  Player*             m_player;
+  Room*               m_rooms[NUM_ROWS][NUM_COLS];
+  vector<Wall*>       m_walls;
+  vector<Monster*>    m_monsters;
   vector<GameObject*> m_gameObjects;
   
   // Helpers - Create Level
-  void createLevel();
   void createRooms();
   void createWalls();
   void createPlayer();
   void createMonsters();
   void createGameObjects();
   
+  // Helpers - Reset Level
+  void resetLevel();
+  void resetCell(Object* object);
+  
+  // Helpers - Other
   void setObjectPosition(Object* object);
 };
 

@@ -30,7 +30,7 @@ Player::~Player() {
 }
 
 // ******************************
-// * Mutators
+// * Actions
 // ******************************
 
 void Player::calculateMove(char input) {
@@ -78,7 +78,7 @@ void Player::calculateMove(char input) {
   }
 }
 
-// Return true if item picked up
+// Return true if item picked up to set didPlayerMove in Game.cpp
 bool Player::pickGameObject() {
   GameObject* gameObject = getOverGameObject();
   
@@ -106,6 +106,17 @@ bool Player::pickGameObject() {
   return true;
 }
 
+void Player::descendStairs() {
+  if (!getOverGameObject()->isStairs()) {
+    getDungeon()->addAction("No stairs to descend");
+    return;
+  }
+
+  setOverGameObject(nullptr);
+  getDungeon()->addAction("Player moved to next level of dungeon!");
+  getDungeon()->nextLevel();
+}
+
 void Player::godMode() {
   if (is_godMode) {
     getDungeon()->addAction("God Mode already activated.");
@@ -120,7 +131,7 @@ void Player::godMode() {
 }
 
 // ******************************
-// * Other
+// * Display
 // ******************************
 
 void Player::displayStats() {
