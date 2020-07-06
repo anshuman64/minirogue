@@ -43,6 +43,7 @@ public:
   void changeArmor(int delta);
   void changeStrength(int delta);
   void changeDexterity(int delta);
+  void changeAsleep(int delta);
   
   // Mutators - Other
   void setWeapon(Weapon* weapon);
@@ -53,6 +54,7 @@ public:
   void attack(Actor* attacker, Actor* defender);
   bool isHit(Actor* attacker, Actor* defender);
   void checkIsDead(Actor* actor);
+  bool checkIsAsleep();
   
 private:
   int  m_hp;
@@ -60,7 +62,7 @@ private:
   int  m_armor;
   int  m_strength;
   int  m_dexterity;
-  bool is_Asleep;
+  int  m_turnsAsleep;
   
   Weapon*     m_weapon;
   GameObject* m_overGameObject;

@@ -19,7 +19,7 @@ public:
   // * Constructor
   // ******************************
   
-  Weapon(Dungeon* dungeon, string name, int damage, int dexBonus, string actionString) : GameObject(dungeon, ')', name, "Damage: +" + to_string(damage) + ", Dexterity: +" + to_string(dexBonus)), m_damage(damage), m_dexBonus(dexBonus), m_actionString(actionString) {}
+  Weapon(Dungeon* dungeon, string name, int damage, int dexBonus, string actionString) : GameObject(dungeon, ')', name, "Damage: +" + to_string(damage) + ", Dexterity: +" + to_string(dexBonus), actionString), m_damage(damage), m_dexBonus(dexBonus) {}
   
   
   // ******************************
@@ -34,10 +34,6 @@ public:
     return m_dexBonus;
   }
   
-  string getActionString() {
-    return m_actionString;
-  }
-  
   virtual bool isMagicFangs() {
     return false;
   }
@@ -45,7 +41,6 @@ public:
 private:
   int    m_damage;
   int    m_dexBonus;
-  string m_actionString;
 };
 
 

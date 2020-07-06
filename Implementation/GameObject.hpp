@@ -20,7 +20,7 @@ public:
   // ******************************
   GameObject(Dungeon* dungeon, char symbol, string name) : Object(dungeon, symbol, name) {}
   
-  GameObject(Dungeon* dungeon, char symbol, string name, string description) : Object(dungeon, symbol, name), m_description(description) {}
+  GameObject(Dungeon* dungeon, char symbol, string name, string description, string actionString) : Object(dungeon, symbol, name), m_description(description), m_actionString(actionString) {}
   
   virtual ~GameObject() {}
   
@@ -52,8 +52,13 @@ public:
     return m_description;
   }
   
+  string getActionString() {
+    return m_actionString;
+  }
+  
 private:
   string m_description;
+  string m_actionString;
 };
 
 #endif /* GameObject_hpp */

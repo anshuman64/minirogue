@@ -51,6 +51,8 @@ public:
   void nextLevel();
   void updateCurrentCell(Actor* actor, int curRow, int curCol);
   void updateNextCell(Actor* actor, int nextRow, int nextCol);
+  void setObjectPosition(Object* object);
+  void generateRandomPosition(Object* object, int &posRow, int &posCol);
   
   // Display Level U Actions
   void displayLevel();
@@ -88,9 +90,8 @@ private:
   void resetCell(Object* object);
   
   // Helpers - Other
-  void     setObjectPosition(Object* object);
-  Weapon*  generateRandomWeapon();
-  Monster* generateRandomMonster();
+  GameObject* generateRandomGameObject();
+  Monster*    generateRandomMonster();
 };
 
 

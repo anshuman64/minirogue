@@ -74,6 +74,9 @@ void Game::play() {
       case 'z':
         m_dungeon->getPlayer()->descendStairs();
         break;
+      case 'r':
+        m_dungeon->getPlayer()->displayScrolls();
+        break;
       case 'q':
         m_dungeon->endGame("Player quit the game.");
         break;

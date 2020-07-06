@@ -13,6 +13,7 @@
 
 #include "Monster.hpp"
 #include "Weapon.hpp"
+#include "Scroll.hpp"
 #include "utilities.hpp"
 
 
@@ -35,6 +36,10 @@ public:
   // * Actions
   // ******************************
   void calculateMove() {
+    if (checkIsAsleep()) {
+      return;
+    }
+    
     if (trueWithProbability(0.1)) {
       changeHP(1);
     }
@@ -46,7 +51,23 @@ public:
 
   GameObject* dropGameObject() {
     if (!isOverGameObject()) {
-      return new MagicFangs(getDungeon()); // deleted in Dungeon
+      switch (randInt(5)) {
+        case 0:
+          return new TeleportationScroll(getDungeon());
+          break;
+        case 1:
+          return new HealthScroll(getDungeon());
+          break;
+        case 2:
+          return new ArmorScroll(getDungeon());
+          break;
+        case 3:
+          return new StrengthScroll(getDungeon());
+          break;
+        case 4:
+          return new DexterityScroll(getDungeon());
+          break;
+      }
     }
     
     return nullptr;

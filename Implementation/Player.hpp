@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include "Actor.hpp"
 
+class Scroll;
+
 class Player : public Actor {
 public:
   // Constructor
@@ -28,11 +30,13 @@ public:
   void displayStats();
   void displayInventory();
   void displayWeapons();
+  void displayScrolls();
   
 private:
   bool                is_godMode;
   vector<GameObject*> m_inventory;
   vector<Weapon*>     m_weapons;
+  vector<Scroll*>     m_scrolls;
 };
 
 #endif /* Player_hpp */

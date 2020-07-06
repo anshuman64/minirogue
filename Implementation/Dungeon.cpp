@@ -16,6 +16,7 @@
 #include "Dragon.hpp"
 #include "Goblin.hpp"
 #include "Weapon.hpp"
+#include "Scroll.hpp"
 #include "utilities.hpp"
 
 using namespace std;
@@ -136,7 +137,7 @@ void Dungeon::createMonsters() {
   int numMonsters = randInt(m_level * 5 - 1) + 2;
   
   for (int i = 0; i <= numMonsters; i++) {
-    Monster* addMonster = generateRandomMonster();
+    Monster* addMonster = new Snakewoman(this);
     m_monsters.push_back(addMonster);
     setObjectPosition(addMonster);
   }
@@ -146,9 +147,9 @@ void Dungeon::createGameObjects() {
   int numGameObjects = randInt(2) + 2;
   
   for (int i = 0; i < numGameObjects; i++) {
-    Weapon* addWeapon = generateRandomWeapon();
-    m_gameObjects.push_back(addWeapon);
-    setObjectPosition(addWeapon);
+    GameObject* addGameObject = generateRandomGameObject();
+    m_gameObjects.push_back(addGameObject);
+    setObjectPosition(addGameObject);
   }
   
   // Creates stairs to next level
@@ -167,8 +168,15 @@ void Dungeon::createGameObjects() {
 }
 
 void Dungeon::setObjectPosition(Object* object) {
-  int posRow, posCol;
+  int posRow = -1;
+  int posCol = -1;
+  generateRandomPosition(object, posRow, posCol);
   
+  object->setPosition(posRow, posCol);
+  m_maze[posRow][posCol] = object;
+}
+
+void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {
   while(true) {
     posRow = randInt(NUM_ROWS);
     posCol = randInt(NUM_COLS);
@@ -176,15 +184,13 @@ void Dungeon::setObjectPosition(Object* object) {
     if (!isWall(posRow, posCol) and (
       (object->isActor() and !isActor(posRow, posCol)) or
       (object->isGameObject() and !isGameObject(posRow, posCol)) )) {
-      object->setPosition(posRow, posCol);
-      m_maze[posRow][posCol] = object;
       return;
     }
   }
 }
 
-Weapon* Dungeon::generateRandomWeapon() {
-  switch (randInt(2)) {
+GameObject* Dungeon::generateRandomGameObject() {
+  switch (randInt(7)) {
     case 0:
       return new Mace(this);
       break;
@@ -193,6 +199,18 @@ Weapon* Dungeon::generateRandomWeapon() {
       break;
     case 2:
       return new LongSword(this);
+      break;
+    case 3:
+      return new HealthScroll(this);
+      break;
+    case 4:
+      return new ArmorScroll(this);
+      break;
+    case 5:
+      return new StrengthScroll(this);
+      break;
+    case 6:
+      return new DexterityScroll(this);
       break;
   }
   

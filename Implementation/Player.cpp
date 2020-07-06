@@ -8,6 +8,7 @@
 
 #include "Player.hpp"
 #include "Weapon.hpp"
+#include "Scroll.hpp"
 #include "utilities.hpp"
 
 
@@ -34,6 +35,11 @@ Player::~Player() {
 // ******************************
 
 void Player::calculateMove(char input) {
+  // If asleep
+  if (checkIsAsleep()) {
+    return;
+  }
+  
   // Regain hit points
   if (trueWithProbability(0.1)) {
     changeHP(1);
@@ -92,6 +98,12 @@ bool Player::pickGameObject() {
     return false;
   }
   
+  if (isAsleep()) {
+    getDungeon()->endGame("Player is asleep and cannot move.");
+    changeAsleep(-1);
+    return true;
+  }
+  
   if (gameObject->isGoldenIdol()) {
     getDungeon()->endGame("Player picked up the Golden Idol. You win!");
     return false;
@@ -105,7 +117,10 @@ bool Player::pickGameObject() {
   m_inventory.push_back(gameObject);
   if (gameObject->isWeapon()) {
     m_weapons.push_back((Weapon*)gameObject);
+  } else if (gameObject->isScroll()) {
+    m_scrolls.push_back((Scroll*)gameObject);
   }
+  
   setOverGameObject(nullptr);
   getDungeon()->addAction("Player picked up a " + gameObject->getName() + ".");
   return true;
@@ -128,9 +143,11 @@ void Player::godMode() {
     return;
   }
   
-  changeMaxHP(50);
-  changeHP(50);
-  changeStrength(9);
+  changeMaxHP(MAX_STATS);
+  changeHP(MAX_STATS);
+  changeArmor(MAX_STATS);
+  changeStrength(MAX_STATS);
+  changeDexterity(MAX_STATS);
   getDungeon()->addAction("Player feels the strength of the Almighty.");
   is_godMode = true;
 }
@@ -181,5 +198,36 @@ void Player::displayWeapons() {
   if (inputIndex < m_weapons.size()) {
     setWeapon(m_weapons[inputIndex]);
     getDungeon()->addAction("Player equipped " + m_weapons[inputIndex]->getName() + ".");
+  }
+}
+
+void Player::displayScrolls() {
+  clearScreen();
+  
+  cout << "Scrolls:" << endl;
+  
+  char letterIndex = 'a';
+  for (int i = 0; i < m_scrolls.size(); i++) {
+    cout << (char)(letterIndex + i) << ". " << m_scrolls[i]->getName() << " - " << m_scrolls[i]->getDescription() << endl;
+  }
+  
+  cout << endl << "Press letter to use or any other key to continue." << endl;
+
+  char input = getCharacter();
+  int inputIndex = input - letterIndex;
+  
+  if (inputIndex < m_scrolls.size()) {
+    Scroll* scrollToUse = m_scrolls[inputIndex];
+    scrollToUse->useScroll();
+    getDungeon()->addAction(scrollToUse->getActionString());
+    
+    m_scrolls.erase(m_scrolls.begin() + inputIndex);
+    for (int i = 0; i < m_inventory.size(); i++) {
+      if (m_inventory[i] == scrollToUse) {
+        m_inventory.erase(m_inventory.begin() + i);
+      }
+    }
+    
+    delete scrollToUse;
   }
 }

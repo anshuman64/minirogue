@@ -15,7 +15,7 @@
 // * Constructor
 // ******************************
 
-Actor::Actor(Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity) : Object(dungeon, symbol, name), m_hp(hp), m_maxHP(hp), m_armor(armor), m_strength(strength), m_dexterity(dexterity), m_overGameObject(nullptr), is_Asleep(false) {}
+Actor::Actor(Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity) : Object(dungeon, symbol, name), m_hp(hp), m_maxHP(hp), m_armor(armor), m_strength(strength), m_dexterity(dexterity), m_overGameObject(nullptr), m_turnsAsleep(0) {}
 
 
 // ******************************
@@ -47,7 +47,7 @@ bool Actor::isOverGameObject() {
 }
 
 bool Actor::isAsleep() {
-  return is_Asleep;
+  return m_turnsAsleep > 0;
 }
 
 
@@ -93,6 +93,14 @@ void Actor::changeDexterity(int delta) {
   m_dexterity = (m_dexterity > MAX_STATS ? MAX_STATS : m_dexterity);
 }
 
+void Actor::changeAsleep(int delta) {
+  if (m_turnsAsleep > 0 && delta > 0) {
+    m_turnsAsleep = max(m_turnsAsleep, delta);
+  } else {
+    m_turnsAsleep += delta;
+  }
+}
+
 
 // ******************************
 // * Mutators - Other
@@ -136,6 +144,11 @@ void Actor::attack(Actor* attacker, Actor* defender) {
     actionString += "hits for " + to_string(damagePoints) + " damage.";
     getDungeon()->addAction(actionString); // Place here for proper action order
     checkIsDead(defender);
+    
+    if (attackerWeapon->getName() == "Magic Fangs" and trueWithProbability(0.2)) {
+      defender->changeAsleep(randInt(5)+2);
+      getDungeon()->addAction(defender->getName() + " fell asleep by the power of " + attacker->getName() + "'s Magic Fangs!");
+    }
   } else {
     actionString += "misses.";
     getDungeon()->addAction(actionString);
@@ -161,4 +174,14 @@ void Actor::checkIsDead(Actor* actor) {
       getDungeon()->endGame("Player was defeated. Game over!");
     }
   }
+}
+
+bool Actor::checkIsAsleep() {
+  if (isAsleep()) {
+    getDungeon()->addAction(getName() + " is asleep and cannot move.");
+    changeAsleep(-1);
+    return true;
+  }
+  
+  return false;
 }

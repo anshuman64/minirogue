@@ -35,6 +35,10 @@ public:
   // * Actions
   // ******************************
   void calculateMove() {
+    if (checkIsAsleep()) {
+      return;
+    }
+    
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
     } else if (stepsToPlayer() <= 3) {
