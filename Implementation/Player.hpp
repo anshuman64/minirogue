@@ -1,0 +1,38 @@
+//
+//  Player.hpp
+//  Project3
+//
+//  Created by Anshuman Dewangan on 7/1/20.
+//  Copyright © 2020 Anshuman Dewangan. All rights reserved.
+//
+
+#ifndef Player_hpp
+#define Player_hpp
+
+#include <stdio.h>
+#include "Actor.hpp"
+
+class Player : public Actor {
+public:
+  // Constructor
+  Player(Dungeon* dungeon);
+  ~Player();
+  
+  // Actions
+  void calculateMove(char input);
+  bool pickGameObject();
+  void godMode();
+  
+  // Other
+  void displayStats();
+  void displayInventory();
+  void displayWeapons();
+  
+private:
+  // Helpers
+  bool                is_godMode;
+  vector<GameObject*> m_inventory;
+  vector<Weapon*>     m_weapons;
+};
+
+#endif /* Player_hpp */
