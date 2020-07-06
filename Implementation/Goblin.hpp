@@ -1,32 +1,32 @@
 //
-//  Bogeyman.hpp
+//  Goblin.hpp
 //  Project3
 //
-//  Created by Anshuman Dewangan on 7/1/20.
+//  Created by Anshuman Dewangan on 7/6/20.
 //  Copyright © 2020 Anshuman Dewangan. All rights reserved.
 //
 
-#ifndef Bogeyman_hpp
-#define Bogeyman_hpp
+#ifndef Goblin_hpp
+#define Goblin_hpp
 
 #include <stdio.h>
-
+ 
 #include "Monster.hpp"
 #include "Weapon.hpp"
 #include "utilities.hpp"
 
 
-class Bogeyman : public Monster {
+class Goblin : public Monster {
 public:
   // ******************************
   // * Constructor
   // ******************************
   
-  Bogeyman(Dungeon* dungeon) : Monster(dungeon, 'B', "Bogeyman", randInt(6)+5, randInt(2)+2, randInt(2)+2, 2) {
+  Goblin(Dungeon* dungeon) : Monster(dungeon, 'G', "Goblin", randInt(6)+15, 3, 1, 1) {
     setWeapon(new ShortSword(dungeon));
   }
 
-  ~Bogeyman() {
+  ~Goblin() {
     delete getWeapon();
   }
   
@@ -34,6 +34,8 @@ public:
   // ******************************
   // * Actions
   // ******************************
+  
+  // TODO: update Goblin move function
   void calculateMove() {
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
@@ -45,7 +47,8 @@ public:
   // TODO: update right probability
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(1)) {
-      return new MagicAxe(getDungeon()); // deleted in Dungeon
+      Weapon* droppedObject = trueWithProbability(0.5) ? (Weapon*)(new MagicAxe(getDungeon())) : (Weapon*)(new MagicFangs(getDungeon()));
+      return droppedObject; // deleted in Dungeon
     }
     
     return nullptr;
@@ -55,4 +58,4 @@ private:
   
 };
 
-#endif /* Bogeyman_hpp */
+#endif /* Goblin_hpp */

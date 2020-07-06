@@ -1,13 +1,13 @@
 //
-//  Bogeyman.hpp
+//  Snakewoman.hpp
 //  Project3
 //
-//  Created by Anshuman Dewangan on 7/1/20.
+//  Created by Anshuman Dewangan on 7/6/20.
 //  Copyright © 2020 Anshuman Dewangan. All rights reserved.
 //
 
-#ifndef Bogeyman_hpp
-#define Bogeyman_hpp
+#ifndef Snakewoman_hpp
+#define Snakewoman_hpp
 
 #include <stdio.h>
 
@@ -16,17 +16,17 @@
 #include "utilities.hpp"
 
 
-class Bogeyman : public Monster {
+class Snakewoman : public Monster {
 public:
   // ******************************
   // * Constructor
   // ******************************
   
-  Bogeyman(Dungeon* dungeon) : Monster(dungeon, 'B', "Bogeyman", randInt(6)+5, randInt(2)+2, randInt(2)+2, 2) {
-    setWeapon(new ShortSword(dungeon));
+  Snakewoman(Dungeon* dungeon) : Monster(dungeon, 'S', "Snakewoman", randInt(4)+3, 2, 3, 3) {
+    setWeapon(new MagicFangs(dungeon));
   }
 
-  ~Bogeyman() {
+  ~Snakewoman() {
     delete getWeapon();
   }
   
@@ -37,7 +37,7 @@ public:
   void calculateMove() {
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
-    } else if (stepsToPlayer() <= 5) {
+    } else if (stepsToPlayer() <= 3) {
       attemptMove();
     }
   }
@@ -45,7 +45,7 @@ public:
   // TODO: update right probability
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(1)) {
-      return new MagicAxe(getDungeon()); // deleted in Dungeon
+      return new MagicFangs(getDungeon()); // deleted in Dungeon
     }
     
     return nullptr;
@@ -55,4 +55,4 @@ private:
   
 };
 
-#endif /* Bogeyman_hpp */
+#endif /* Snakewoman_hpp */

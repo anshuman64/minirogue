@@ -1,13 +1,13 @@
 //
-//  Bogeyman.hpp
+//  Dragon.hpp
 //  Project3
 //
-//  Created by Anshuman Dewangan on 7/1/20.
+//  Created by Anshuman Dewangan on 7/6/20.
 //  Copyright © 2020 Anshuman Dewangan. All rights reserved.
 //
 
-#ifndef Bogeyman_hpp
-#define Bogeyman_hpp
+#ifndef Dragon_hpp
+#define Dragon_hpp
 
 #include <stdio.h>
 
@@ -16,17 +16,17 @@
 #include "utilities.hpp"
 
 
-class Bogeyman : public Monster {
+class Dragon : public Monster {
 public:
   // ******************************
   // * Constructor
   // ******************************
   
-  Bogeyman(Dungeon* dungeon) : Monster(dungeon, 'B', "Bogeyman", randInt(6)+5, randInt(2)+2, randInt(2)+2, 2) {
-    setWeapon(new ShortSword(dungeon));
+  Dragon(Dungeon* dungeon) : Monster(dungeon, 'D', "Dragon", randInt(6)+20, 4, 4, 4) {
+    setWeapon(new LongSword(dungeon));
   }
 
-  ~Bogeyman() {
+  ~Dragon() {
     delete getWeapon();
   }
   
@@ -37,15 +37,12 @@ public:
   void calculateMove() {
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
-    } else if (stepsToPlayer() <= 5) {
-      attemptMove();
     }
   }
 
-  // TODO: update right probability
   GameObject* dropGameObject() {
-    if (!isOverGameObject() and trueWithProbability(1)) {
-      return new MagicAxe(getDungeon()); // deleted in Dungeon
+    if (!isOverGameObject()) {
+      return new MagicFangs(getDungeon()); // deleted in Dungeon
     }
     
     return nullptr;
@@ -55,4 +52,4 @@ private:
   
 };
 
-#endif /* Bogeyman_hpp */
+#endif /* Dragon_hpp */

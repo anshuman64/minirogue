@@ -12,6 +12,9 @@
 #include "Player.hpp"
 #include "Object.hpp"
 #include "Bogeyman.hpp"
+#include "Snakewoman.hpp"
+#include "Dragon.hpp"
+#include "Goblin.hpp"
 #include "Weapon.hpp"
 #include "utilities.hpp"
 
@@ -133,8 +136,9 @@ void Dungeon::createMonsters() {
   int numMonsters = randInt(m_level * 5 - 1) + 2;
   
   for (int i = 0; i <= numMonsters; i++) {
-    m_monsters.push_back(new Bogeyman(this));
-    setObjectPosition(m_monsters[i]);
+    Monster* addMonster = generateRandomMonster();
+    m_monsters.push_back(addMonster);
+    setObjectPosition(addMonster);
   }
 }
 
@@ -148,9 +152,11 @@ void Dungeon::createGameObjects() {
   }
   
   // Creates stairs to next level
-  GameObject* stairs = new GameObject(this, '>', "Stairs");
-  m_gameObjects.push_back(stairs);
-  setObjectPosition(stairs);
+  if (m_level != 2) {
+    GameObject* stairs = new GameObject(this, '>', "Stairs");
+    m_gameObjects.push_back(stairs);
+    setObjectPosition(stairs);
+  }
   
   // Creates golden idol
   if (m_level == 2) {
@@ -183,11 +189,34 @@ Weapon* Dungeon::generateRandomWeapon() {
       return new Mace(this);
       break;
     case 1:
+      return new ShortSword(this);
+      break;
+    case 2:
       return new LongSword(this);
       break;
   }
   
   return new ShortSword(this);
+}
+
+Monster* Dungeon::generateRandomMonster() {
+  int numChoices = m_level >=3 ? 4 : 3;
+  switch (randInt(numChoices-1)) {
+    case 0:
+      return new Bogeyman(this);
+      break;
+    case 1:
+      return new Snakewoman(this);
+      break;
+    case 2:
+      return new Goblin(this);
+      break;
+    case 3:
+      return new Dragon(this);
+      break;
+  }
+  
+  return new Bogeyman(this);
 }
 
 
@@ -298,9 +327,10 @@ void Dungeon::destroyMonster(Monster* monster) {
       if (droppedGameObject != nullptr) {
         m_gameObjects.push_back(droppedGameObject);
         m_maze[rowPos][colPos] = droppedGameObject;
+        droppedGameObject->setPosition(rowPos, colPos);
+      } else {
+        updateCurrentCell(monster, rowPos, colPos);
       }
-      
-      updateCurrentCell(monster, rowPos, colPos);
       
       m_monsters.erase(m_monsters.begin() + i);
       delete monster;

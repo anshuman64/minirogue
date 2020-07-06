@@ -88,8 +88,9 @@ private:
   void resetCell(Object* object);
   
   // Helpers - Other
-  void    setObjectPosition(Object* object);
-  Weapon* generateRandomWeapon();
+  void     setObjectPosition(Object* object);
+  Weapon*  generateRandomWeapon();
+  Monster* generateRandomMonster();
 };
 
 
