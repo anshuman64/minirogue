@@ -27,7 +27,7 @@ public:
   void displayHelp();
   
 private:
-  Dungeon* m_dungeon;
+  Dungeon* m_dungeon; 
 };
 
 #endif /* Game_hpp */
