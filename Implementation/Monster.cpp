@@ -51,9 +51,9 @@ void Monster::attemptMove() {
     nextCol--;
   }
   
-  if (getDungeon()->isRoom(nextRow, curCol) or getDungeon()->isGameObject(nextRow, curCol)) {
+  if (getDungeon()->isSpace(nextRow, curCol) or getDungeon()->isGameObject(nextRow, curCol)) {
     move(curRow, curCol, nextRow, curCol);
-  } else if (getDungeon()->isRoom(curRow, nextCol) or getDungeon()->isGameObject(curRow, nextCol)) {
+  } else if (getDungeon()->isSpace(curRow, nextCol) or getDungeon()->isGameObject(curRow, nextCol)) {
     move(curRow, curCol, curRow, nextCol);
   }
 }

@@ -47,7 +47,7 @@ public:
   }
 
   GameObject* dropGameObject() {
-    if (!isOverGameObject() and trueWithProbability(0.11)) {
+    if (!isOverGameObject() and trueWithProbability(0.1)) {
       return new MagicAxe(getDungeon()); // deleted in Dungeon
     }
     

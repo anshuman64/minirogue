@@ -20,7 +20,7 @@ using namespace std;
 
 class Object;
 class GameObject;
-class Room;
+class Space;
 class Wall;
 class Actor;
 class Player;
@@ -40,7 +40,7 @@ public:
   
   // Accessors - Booleans
   bool isGameOver();
-  bool isRoom(int rowPos, int colPos);
+  bool isSpace(int rowPos, int colPos);
   bool isWall(int rowPos, int colPos);
   bool isMonster(int rowPos, int colPos);
   bool isActor(int rowPos, int colPos);
@@ -73,13 +73,13 @@ private:
   queue<string> m_actions;
   
   Player*             m_player;
-  Room*               m_rooms[NUM_ROWS][NUM_COLS];
+  Space*               m_spaces[NUM_ROWS][NUM_COLS];
   vector<Wall*>       m_walls;
   vector<Monster*>    m_monsters;
   vector<GameObject*> m_gameObjects;
   
   // Helpers - Create Level
-  void createRooms();
+  void createSpaces();
   void createWalls();
   void createPlayer();
   void createMonsters();

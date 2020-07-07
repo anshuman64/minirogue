@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <set>
 
 #include "Dungeon.hpp"
 #include "Player.hpp"
@@ -28,8 +29,8 @@ using namespace std;
 
 Dungeon::Dungeon() : m_level(0), is_gameOver(false) {
   // WARNING: Has to be called in this order!
-  createRooms();
   createWalls();
+  createSpaces();
   createMonsters();
   createGameObjects();
   createPlayer();
@@ -38,7 +39,7 @@ Dungeon::Dungeon() : m_level(0), is_gameOver(false) {
 Dungeon::~Dungeon() {
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
-      delete m_rooms[i][j];
+      delete m_spaces[i][j];
     }
   }
   
@@ -77,8 +78,8 @@ bool Dungeon::isGameOver() {
   return is_gameOver;
 }
 
-bool Dungeon::isRoom(int rowPos, int colPos) {
-  return m_maze[rowPos][colPos]->isRoom();
+bool Dungeon::isSpace(int rowPos, int colPos) {
+  return m_maze[rowPos][colPos]->isSpace();
 }
 
 bool Dungeon::isWall(int rowPos, int colPos) {
@@ -106,25 +107,46 @@ bool Dungeon::isGameObject(int rowPos, int colPos) {
 // * Helpers - Create Level
 // ******************************
 
-void Dungeon::createRooms() {
+void Dungeon::createWalls() {
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
-      Room* newRoom = new Room(this, i, j);
-      m_rooms[i][j] = newRoom;
-      m_maze[i][j] = newRoom;
+      Wall* newWall = new Wall(this, i, j);
+      m_walls.push_back(newWall);
+      m_maze[i][j] = newWall;
     }
   }
 }
 
-void Dungeon::createWalls() {
-  for (int i = 0; i < NUM_ROWS; i++) {
-    for (int j = 0; j < NUM_COLS; j++) {
-      if (i == 0 or i == NUM_ROWS-1 or j == 0 or j == NUM_COLS-1) {
-        Wall* newWall = new Wall(this, i, j);
-        m_walls.push_back(newWall);
-        m_maze[i][j] = newWall;
+void Dungeon::createSpaces() {
+  int totalArea = 0;
+  int startRow = 1;
+  int startCol = 1;
+  int endRow = 4;
+  int endCol = 4;
+  set<int> usedRows;
+  set<int> usedCols;
+  
+  while(totalArea < 300) {
+    startRow = randInt(NUM_ROWS-2)+1;
+    startCol = randInt(NUM_COLS-2)+1;
+    endRow = startRow+randInt(6)+4;
+    endCol = startCol+randInt(10)+4;
+    
+    if (endRow > NUM_ROWS-1 or endCol > NUM_COLS-1) {
+      continue;
+    }
+    
+    
+    
+    for (int i = startRow; i < endRow; i++) {
+      for (int j = startCol; j < endCol; j++) {
+        Space* newSpace = new Space(this, i, j);
+        m_spaces[i][j] = newSpace;
+        m_maze[i][j] = newSpace;
       }
     }
+    
+    totalArea += (endRow-startRow) * (endCol-startCol);
   }
 }
 
@@ -137,7 +159,7 @@ void Dungeon::createMonsters() {
   int numMonsters = randInt(m_level * 5 - 1) + 2;
   
   for (int i = 0; i <= numMonsters; i++) {
-    Monster* addMonster = new Snakewoman(this);
+    Monster* addMonster = generateRandomMonster();
     m_monsters.push_back(addMonster);
     setObjectPosition(addMonster);
   }
@@ -153,14 +175,14 @@ void Dungeon::createGameObjects() {
   }
   
   // Creates stairs to next level
-  if (m_level != 2) {
+  if (m_level != MAX_LEVEL) {
     GameObject* stairs = new GameObject(this, '>', "Stairs");
     m_gameObjects.push_back(stairs);
     setObjectPosition(stairs);
   }
   
   // Creates golden idol
-  if (m_level == 2) {
+  if (m_level == MAX_LEVEL) {
     GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol");
     m_gameObjects.push_back(goldenIdol);
     setObjectPosition(goldenIdol);
@@ -189,6 +211,26 @@ void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {
   }
 }
 
+Monster* Dungeon::generateRandomMonster() {
+  int numChoices = m_level >=3 ? 4 : 3;
+  switch (randInt(numChoices-1)) {
+    case 0:
+      return new Bogeyman(this);
+      break;
+    case 1:
+      return new Snakewoman(this);
+      break;
+    case 2:
+      return new Goblin(this);
+      break;
+    case 3:
+      return new Dragon(this);
+      break;
+  }
+  
+  return new Bogeyman(this);
+}
+
 GameObject* Dungeon::generateRandomGameObject() {
   switch (randInt(7)) {
     case 0:
@@ -215,26 +257,6 @@ GameObject* Dungeon::generateRandomGameObject() {
   }
   
   return new ShortSword(this);
-}
-
-Monster* Dungeon::generateRandomMonster() {
-  int numChoices = m_level >=3 ? 4 : 3;
-  switch (randInt(numChoices-1)) {
-    case 0:
-      return new Bogeyman(this);
-      break;
-    case 1:
-      return new Snakewoman(this);
-      break;
-    case 2:
-      return new Goblin(this);
-      break;
-    case 3:
-      return new Dragon(this);
-      break;
-  }
-  
-  return new Bogeyman(this);
 }
 
 
@@ -268,7 +290,7 @@ void Dungeon::resetLevel() {
 void Dungeon::resetCell(Object* object) {
   int objectRowPos = object->getRowPosition();
   int objectColPos = object->getColPosition();
-  m_maze[objectRowPos][objectColPos] = m_rooms[objectRowPos][objectColPos];
+  m_maze[objectRowPos][objectColPos] = m_spaces[objectRowPos][objectColPos];
 }
 
 
@@ -280,7 +302,7 @@ void Dungeon::updateCurrentCell(Actor* actor, int curRow, int curCol) {
   if (actor->isOverGameObject()) {
     m_maze[curRow][curCol] = actor->getOverGameObject();
   } else {
-    m_maze[curRow][curCol] = m_rooms[curRow][curCol];
+    m_maze[curRow][curCol] = m_spaces[curRow][curCol];
   }
 }
 

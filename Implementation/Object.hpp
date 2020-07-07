@@ -36,7 +36,7 @@ public:
   bool isPlayer();
   bool isMonster();
   bool isGameObject();
-  bool isRoom();
+  bool isSpace();
   bool isWall();
   
   // Mutators
@@ -57,9 +57,9 @@ public:
 };
 
 
-class Room : public Object {
+class Space : public Object {
 public:
-  Room(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, ' ', "Room", rowPos, colPos) {}
+  Space(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, ' ', "Space", rowPos, colPos) {}
 };
 
 #endif /* Object_hpp */

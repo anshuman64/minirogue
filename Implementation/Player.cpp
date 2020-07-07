@@ -74,7 +74,7 @@ void Player::calculateMove(char input) {
     getDungeon()->addAction("Player tried moving " + directionString + " but was blocked by a wall.");
   }
   
-  else if (getDungeon()->isRoom(nextRow, nextCol)) {
+  else if (getDungeon()->isSpace(nextRow, nextCol)) {
     move(curRow, curCol, nextRow, nextCol);
     getDungeon()->addAction("Player moved " + directionString + ".");
   }

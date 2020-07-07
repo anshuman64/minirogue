@@ -17,6 +17,7 @@ const int NUM_ROWS = 18;
 const int NUM_COLS = 70;
 
 const int MAX_STATS = 99;
+const int MAX_LEVEL = 4;
 
 const char ARROW_LEFT  = 'a';
 const char ARROW_RIGHT = 'd';

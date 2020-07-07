@@ -62,7 +62,7 @@ bool Object::isGameObject() {
   return (m_symbol == '?' or m_symbol == ')' or m_symbol == '&' or m_symbol == '>');
 }
 
-bool Object::isRoom() {
+bool Object::isSpace() {
   return (m_symbol == ' ');
 }
 
