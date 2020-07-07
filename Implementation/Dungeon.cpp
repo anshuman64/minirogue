@@ -119,25 +119,24 @@ void Dungeon::createWalls() {
 
 void Dungeon::createSpaces() {
   int totalArea = 0;
-  int MIN_DIM = 4;
+  int MIN_ROW_DIM = 5;
+  int MIN_COL_DIM = 7;
   vector<vector<int>> rooms;
   
-  while(totalArea < 100) {
-    int startRow = randInt(NUM_ROWS-2-MIN_DIM)+1;
-    int startCol = randInt(NUM_COLS-2-MIN_DIM)+1;
-    int endRow = startRow+randInt(6)+MIN_DIM;
-    int endCol = startCol+randInt(10)+MIN_DIM;
+  while(totalArea < 350) {
+    int startRow = randInt(NUM_ROWS-2-MIN_ROW_DIM)+1;
+    int startCol = randInt(NUM_COLS-2-MIN_COL_DIM)+1;
+    int endRow = startRow+randInt(6)+MIN_ROW_DIM;
+    int endCol = startCol+randInt(10)+MIN_COL_DIM;
     
     if (endRow > NUM_ROWS-1 or endCol > NUM_COLS-1) {
       continue;
     }
     
-    for (int i = 0; i < rooms.size(); i++) {
-      if ( (startRow >= rooms[i][0] and startRow <= rooms[i][2]) or
-           (endRow >= rooms[i][0] and endRow <= rooms[i][2])     or
-           (startCol >= rooms[i][1] and startCol <= rooms[i][3]) or
-           (endCol >= rooms[i][1] and endCol <= rooms[i][3]) )
+    for (int x = 0; x < rooms.size(); x++) {
+      if(rooms[x][0] >= startRow-1 and rooms[x][0] <= endRow+1 and rooms[x][1] >= startCol-1 and rooms[x][1] <= endCol+1) {
         goto cont;
+      }
     }
 
     rooms.push_back({startRow, startCol, endRow, endCol});
@@ -146,10 +145,12 @@ void Dungeon::createSpaces() {
         Space* newSpace = new Space(this, i, j);
         m_spaces[i][j] = newSpace;
         m_maze[i][j] = newSpace;
+        rooms.push_back({i, j});
       }
     }
     
     totalArea += (endRow-startRow) * (endCol-startCol);
+    displayLevel();
     cont:;
   }
 }
