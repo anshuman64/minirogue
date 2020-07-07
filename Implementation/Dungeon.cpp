@@ -119,25 +119,28 @@ void Dungeon::createWalls() {
 
 void Dungeon::createSpaces() {
   int totalArea = 0;
-  int startRow = 1;
-  int startCol = 1;
-  int endRow = 4;
-  int endCol = 4;
-  set<int> usedRows;
-  set<int> usedCols;
+  int MIN_DIM = 4;
+  vector<vector<int>> rooms;
   
-  while(totalArea < 300) {
-    startRow = randInt(NUM_ROWS-2)+1;
-    startCol = randInt(NUM_COLS-2)+1;
-    endRow = startRow+randInt(6)+4;
-    endCol = startCol+randInt(10)+4;
+  while(totalArea < 100) {
+    int startRow = randInt(NUM_ROWS-2-MIN_DIM)+1;
+    int startCol = randInt(NUM_COLS-2-MIN_DIM)+1;
+    int endRow = startRow+randInt(6)+MIN_DIM;
+    int endCol = startCol+randInt(10)+MIN_DIM;
     
     if (endRow > NUM_ROWS-1 or endCol > NUM_COLS-1) {
       continue;
     }
     
-    
-    
+    for (int i = 0; i < rooms.size(); i++) {
+      if ( (startRow >= rooms[i][0] and startRow <= rooms[i][2]) or
+           (endRow >= rooms[i][0] and endRow <= rooms[i][2])     or
+           (startCol >= rooms[i][1] and startCol <= rooms[i][3]) or
+           (endCol >= rooms[i][1] and endCol <= rooms[i][3]) )
+        goto cont;
+    }
+
+    rooms.push_back({startRow, startCol, endRow, endCol});
     for (int i = startRow; i < endRow; i++) {
       for (int j = startCol; j < endCol; j++) {
         Space* newSpace = new Space(this, i, j);
@@ -147,6 +150,7 @@ void Dungeon::createSpaces() {
     }
     
     totalArea += (endRow-startRow) * (endCol-startCol);
+    cont:;
   }
 }
 

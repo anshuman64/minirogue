@@ -73,7 +73,7 @@ private:
   queue<string> m_actions;
   
   Player*             m_player;
-  Space*               m_spaces[NUM_ROWS][NUM_COLS];
+  Space*              m_spaces[NUM_ROWS][NUM_COLS];
   vector<Wall*>       m_walls;
   vector<Monster*>    m_monsters;
   vector<GameObject*> m_gameObjects;
