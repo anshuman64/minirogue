@@ -37,16 +37,6 @@ Dungeon::Dungeon() : m_level(0), is_gameOver(false) {
 }
 
 Dungeon::~Dungeon() {
-  for (int i = 0; i < NUM_ROWS; i++) {
-    for (int j = 0; j < NUM_COLS; j++) {
-      delete m_spaces[i][j];
-    }
-  }
-  
-  for (int i = 0; i < m_walls.size(); i++) {
-    delete m_walls[i];
-  }
-  
   resetLevel();
   
   delete m_player;
@@ -117,8 +107,6 @@ void Dungeon::createWalls() {
   }
 }
 
-
-
 void Dungeon::createSpaces() {
   // Initialize spaces as nullptr
   for (int i = 0; i < NUM_ROWS; i++) {
@@ -126,8 +114,10 @@ void Dungeon::createSpaces() {
       m_spaces[i][j] = nullptr;
     }
   }
+  
   vector<vector<int>> rooms;
   
+  // Generate non-overlapping rooms
   createRooms(rooms, 350);
   
   int distances[rooms.size()][rooms.size()];
@@ -135,80 +125,29 @@ void Dungeon::createSpaces() {
   
   for (int i = 0; i < rooms.size()-1; i++) {
     for (int j = i+1; j < rooms.size(); j++) {
+      // Determine if corridor is possible from room i to room j
       int distance = NUM_COLS;
       int corridorType = -1;
-      findClosestRoom(distance, corridorType, rooms, i, j, 0, 0, 1, 7, 2);
-      findClosestRoom(distance, corridorType, rooms, i, j, 2, 0, 1, 6, 3);
-      findClosestRoom(distance, corridorType, rooms, i, j, 1, 1, 0, 0, 5);
-      findClosestRoom(distance, corridorType, rooms, i, j, 3, 1, 0, 1, 4);
+      isCorridorType(distance, corridorType, rooms, i, j, 0, 0, 1, 7, 2);
+      isCorridorType(distance, corridorType, rooms, i, j, 2, 0, 1, 6, 3);
+      isCorridorType(distance, corridorType, rooms, i, j, 1, 1, 0, 0, 5);
+      isCorridorType(distance, corridorType, rooms, i, j, 3, 1, 0, 1, 4);
       distances[i][j] = distance;
       corridorTypes[i][j] = corridorType;
       
+      // Determine if corridor is possible from room j to room i
       distance = NUM_COLS;
       corridorType = -1;
-      findClosestRoom(distance, corridorType, rooms, j, i, 0, 0, 1, 7, 2);
-      findClosestRoom(distance, corridorType, rooms, j, i, 2, 0, 1, 6, 3);
-      findClosestRoom(distance, corridorType, rooms, j, i, 1, 1, 0, 0, 5);
-      findClosestRoom(distance, corridorType, rooms, j, i, 3, 1, 0, 1, 4);
+      isCorridorType(distance, corridorType, rooms, j, i, 0, 0, 1, 7, 2);
+      isCorridorType(distance, corridorType, rooms, j, i, 2, 0, 1, 6, 3);
+      isCorridorType(distance, corridorType, rooms, j, i, 1, 1, 0, 0, 5);
+      isCorridorType(distance, corridorType, rooms, j, i, 3, 1, 0, 1, 4);
       distances[j][i] = distance;
       corridorTypes[j][i] = corridorType;
-      
-      
-//      if (rooms[x][0] >= rooms[y][0] and rooms[x][0] <= rooms[y][2]) {
-//        if (rooms[x][1] > rooms[y][1]) {
-//          arr1[x][y] = rooms[x][1] - rooms[y][3];
-//          arr2[x][y] = 7;
-//        } else {
-//          arr1[x][y] = rooms[y][1] - rooms[x][3];
-//          arr2[x][y] = 2;
-//        }
-//      }
-//
-//      if (rooms[y][0] >= rooms[x][0] and rooms[y][0] <= rooms[x][2]) {
-//        if (rooms[y][1] > rooms[x][1]) {
-//          arr1[y][x] = rooms[y][1] - rooms[x][3];
-//          arr2[y][x] = 7;
-//        } else {
-//          arr1[y][x] = rooms[x][1] - rooms[y][3];
-//          arr2[y][x] = 2;
-//        }
-//      }
-//
-//      if (rooms[x][2] >= rooms[y][0] and rooms[x][2] <= rooms[y][2]) {
-//        if (rooms[x][1] > rooms[y][1]) {
-//          arr1[x][y] = rooms[x][1] - rooms[y][3];
-//          arr2[x][y] = 6;
-//        } else {
-//          arr1[x][y] = rooms[y][1] - rooms[x][3];
-//          arr2[x][y] = 3;
-//        }
-//      }
-//
-//      if (rooms[x][1] >= rooms[y][1] and rooms[x][1] <= rooms[y][3]) {
-//        if (rooms[x][0] > rooms[y][0]) {
-//          arr1[x][y] = rooms[x][0] - rooms[y][2];
-//          arr2[x][y] = 0;
-//        } else {
-//          arr1[x][y] = rooms[y][0] - rooms[x][2];
-//          arr2[x][y] = 5;
-//        }
-//      }
-//
-//      if (rooms[x][3] >= rooms[y][1] and rooms[x][3] <= rooms[y][3]) {
-//        if (rooms[x][0] > rooms[y][0]) {
-//          arr1[x][y] = rooms[x][0] - rooms[y][2];
-//          arr2[x][y] = 1;
-//        } else {
-//          arr1[x][y] = rooms[y][0] - rooms[x][2];
-//          arr2[x][y] = 4;
-//        }
-//      }
     }
   }
   
   for (int x = 0; x < rooms.size(); x++) {
-    int currentRoom;
-    int shortestDist = NUM_COLS;
     int corridorType = -1;
     
     for (int y = 0; y < rooms.size(); y++) {
@@ -216,48 +155,38 @@ void Dungeon::createSpaces() {
         continue;
       }
       
-      if (x == 1) {
-        cout << "";
-      }
-      
-      if (corridorTypes[x][y] > 0 and distances[x][y] < shortestDist) {
-        shortestDist = distances[x][y];
-        currentRoom = x;
+      if (corridorTypes[x][y] > 0) {
         corridorType = corridorTypes[x][y];
-        distances[y][x] = 200;
+        
+        // Avoid creating corridor to the same room
+        distances[y][x] = NUM_COLS;
         corridorTypes[y][x] = -1;
       }
       
-//      if (corridorTypes[y][x] > 0 and distances[y][x] < shortestDist) {
-//        shortestDist = distances[y][x];
-//        currentRoom = y;
-//        corridorType = corridorTypes[y][x];
-//      }
-      
       switch (corridorType) {
         case 0:
-          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][1], false, -1);
+          createCorridors(rooms, rooms[x][0], rooms[x][1], false, -1);
           break;
         case 1:
-          createCorridors(rooms, rooms[currentRoom][0]-1, rooms[currentRoom][3]-1, false, -1);
+          createCorridors(rooms, rooms[x][0], rooms[x][3], false, -1);
           break;
         case 2:
-          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][3], true, 1);
+          createCorridors(rooms, rooms[x][0], rooms[x][3], true, 1);
           break;
         case 3:
-          createCorridors(rooms, rooms[currentRoom][2]-1, rooms[currentRoom][3], true, 1);
+          createCorridors(rooms, rooms[x][2], rooms[x][3], true, 1);
           break;
         case 4:
-          createCorridors(rooms, rooms[currentRoom][2], rooms[currentRoom][3]-1, false, 1);
+          createCorridors(rooms, rooms[x][2], rooms[x][3], false, 1);
           break;
         case 5:
-          createCorridors(rooms, rooms[currentRoom][2], rooms[currentRoom][1], false, 1);
+          createCorridors(rooms, rooms[x][2], rooms[x][1], false, 1);
           break;
         case 6:
-          createCorridors(rooms, rooms[currentRoom][2]-1, rooms[currentRoom][1]-1, true, -1);
+          createCorridors(rooms, rooms[x][2], rooms[x][1], true, -1);
           break;
         case 7:
-          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][1]-1, true, -1);
+          createCorridors(rooms, rooms[x][0], rooms[x][1], true, -1);
           break;
       }
     }
@@ -268,8 +197,10 @@ void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
   int totalArea = 0;
   int MIN_ROW_DIM = 5;
   int MIN_COL_DIM = 7;
+  int tries = 0;
   
-  while(totalArea < desiredArea) {
+  while(totalArea < desiredArea and tries < 10000) {
+    tries++;
     int startRow = randInt(NUM_ROWS-2-MIN_ROW_DIM)+1;
     int startCol = randInt(NUM_COLS-2-MIN_COL_DIM)+1;
     int endRow = startRow+randInt(6)+MIN_ROW_DIM;
@@ -287,7 +218,7 @@ void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
       }
     }
 
-    rooms.push_back({startRow, startCol, endRow, endCol});
+    rooms.push_back({startRow, startCol, endRow-1, endCol-1});
     for (int i = startRow; i < endRow; i++) {
       for (int j = startCol; j < endCol; j++) {
         Space* newSpace = new Space(this, i, j);
@@ -297,12 +228,11 @@ void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
     }
     
     totalArea += (endRow-startRow) * (endCol-startCol);
-    displayLevel(); // TODO: delete this line
     cont:;
   }
 }
               
-void Dungeon::findClosestRoom(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n) {
+void Dungeon::isCorridorType(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n) {
   if (rooms[x][a] >= rooms[y][b] and rooms[x][a] <= rooms[y][b+2]) {
     if (rooms[x][c] > rooms[y][c]) {
       distance = rooms[x][c] - rooms[y][c+2];
@@ -315,7 +245,14 @@ void Dungeon::findClosestRoom(int &distance, int &corridorType, vector<vector<in
 }
 
 void Dungeon::createCorridors(vector<vector<int>> &rooms, int curRow, int curCol, bool changeCol, int delta) {
-  while (isWall(curRow, curCol) or curCol == 0 or curCol == NUM_COLS or curRow == 0 or curRow == NUM_ROWS) {
+  // Start by offsetting corner of room by one
+  if (changeCol) {
+    curCol += delta;
+  } else {
+    curRow += delta;
+  }
+  
+  while (isWall(curRow, curCol) and curRow > 0 and curRow < NUM_ROWS and curCol > 0 and curCol < NUM_COLS) {
     Space* newSpace = new Space(this, curRow, curCol);
     m_spaces[curRow][curCol] = newSpace;
     m_maze[curRow][curCol] = newSpace;
@@ -326,8 +263,6 @@ void Dungeon::createCorridors(vector<vector<int>> &rooms, int curRow, int curCol
       curRow += delta;
     }
   }
-  
-  displayLevel();
 }
 
 void Dungeon::createPlayer() {
@@ -448,6 +383,8 @@ void Dungeon::nextLevel() {
   resetLevel();
   m_level++;
   
+  createWalls();
+  createSpaces();
   createMonsters();
   createGameObjects();
   setObjectPosition(m_player);
@@ -455,22 +392,24 @@ void Dungeon::nextLevel() {
 
 void Dungeon::resetLevel() {
   while (!m_monsters.empty()) {
-    resetCell(m_monsters.back());
     m_monsters.pop_back();
   }
   
   while (!m_gameObjects.empty()) {
-    resetCell(m_gameObjects.back());
     m_gameObjects.pop_back();
   }
   
-  resetCell(m_player);
-}
-
-void Dungeon::resetCell(Object* object) {
-  int objectRowPos = object->getRowPosition();
-  int objectColPos = object->getColPosition();
-  m_maze[objectRowPos][objectColPos] = m_spaces[objectRowPos][objectColPos];
+  for (int i = 0; i < NUM_ROWS; i++) {
+    for (int j = 0; j < NUM_COLS; j++) {
+      delete m_spaces[i][j];
+      m_spaces[i][j] = nullptr;
+    }
+  }
+  
+  for (int i = 0; i < m_walls.size(); i++) {
+    delete m_walls[i];
+    m_walls[i] = nullptr;
+  }
 }
 
 

@@ -81,7 +81,7 @@ private:
   // Helpers - Create Level
   void createSpaces();
   void createRooms(vector<vector<int>> &rooms, int desiredArea);
-  void findClosestRoom(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n);
+  void isCorridorType(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n);
   void createCorridors(vector<vector<int>> &rooms, int curRow, int curCol, bool changeCol, int delta);
   void createWalls();
   void createPlayer();
