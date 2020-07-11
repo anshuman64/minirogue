@@ -16,6 +16,7 @@
 #include "utilities.hpp"
 
 
+
 class Goblin : public Monster {
 public:
   // ******************************
@@ -41,11 +42,60 @@ public:
       return;
     }
     
+    Player* player = getDungeon()->getPlayer();
+    
     if (stepsToPlayer() == 1) {
-      attack(this, (Actor*)getDungeon()->getPlayer());
-    } else if (stepsToPlayer() <= 5) {
-      attemptMove();
+      attack(this, (Actor*) player);
+    } else {
+      char maze[NUM_ROWS][NUM_COLS];
+      for (int i = 0; i < NUM_ROWS; i++) {
+        for (int j = 0; j < NUM_COLS; j++) {
+          maze[i][j] = ' ';
+        }
+      }
+      
+      vector<vector<int>> route;
+      vector<int> step;
+      int minDist = INT_MAX;
+      
+      testMove(maze, getRowPosition(), getColPosition(), player->getRowPosition(), player->getColPosition(), minDist, 0, route, step);
+      if (step.size() != 0) {
+        move(getRowPosition(), getColPosition(), step[0], step[1]);
+      }
     }
+  }
+  
+  bool isValid(char maze[][NUM_COLS], int startRow, int startCol) {
+    return startRow != 0 and startRow != NUM_ROWS and startCol != 0 and startCol != NUM_COLS
+    and maze[startRow][startCol] != 'o' and !getDungeon()->isWall(startRow, startCol) and !getDungeon()->isMonster(startRow, startCol);
+  }
+  
+  void testMove(char maze[][NUM_COLS], int startRow, int startCol, int endRow, int endCol, int &minDist, int dist, vector<vector<int>> &route, vector<int> &step) {
+    if (dist > 10 or dist > minDist)
+      return;
+    
+    if (startRow == endRow and startCol == endCol) {
+      if (dist < minDist) {
+        minDist = dist;
+        step = route[1];
+      }
+      return;
+    }
+    
+    maze[startRow][startCol] = 'o';
+    route.push_back({startRow, startCol});
+    
+    if (isValid(maze, startRow+1, startCol))
+      testMove(maze, startRow+1, startCol, endRow, endCol, minDist, dist+1, route, step);
+    if (isValid(maze, startRow-1, startCol))
+      testMove(maze, startRow-1, startCol, endRow, endCol, minDist, dist+1, route, step);
+    if (isValid(maze, startRow, startCol+1))
+      testMove(maze, startRow, startCol+1, endRow, endCol, minDist, dist+1, route, step);
+    if (isValid(maze, startRow, startCol-1))
+      testMove(maze, startRow, startCol-1, endRow, endCol, minDist, dist+1, route, step);
+    
+    maze[startRow][startCol] = ' ';
+    route.pop_back();
   }
 
   GameObject* dropGameObject() {

@@ -118,7 +118,7 @@ void Dungeon::createSpaces() {
   vector<vector<int>> rooms;
   
   // Generate non-overlapping rooms
-  createRooms(rooms, 350);
+  createRooms(rooms, 350); // TODO: revert
   
   int distances[rooms.size()][rooms.size()];
   int corridorTypes[rooms.size()][rooms.size()];
@@ -274,7 +274,8 @@ void Dungeon::createMonsters() {
   int numMonsters = randInt(m_level * 5 - 1) + 2;
   
   for (int i = 0; i <= numMonsters; i++) {
-    Monster* addMonster = generateRandomMonster();
+//    Monster* addMonster = generateRandomMonster(); TODO: revert
+    Monster* addMonster = new Goblin(this);
     m_monsters.push_back(addMonster);
     setObjectPosition(addMonster);
   }
