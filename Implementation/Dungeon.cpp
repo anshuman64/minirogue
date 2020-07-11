@@ -117,13 +117,159 @@ void Dungeon::createWalls() {
   }
 }
 
+
+
 void Dungeon::createSpaces() {
+  // Initialize spaces as nullptr
+  for (int i = 0; i < NUM_ROWS; i++) {
+    for (int j = 0; j < NUM_COLS; j++) {
+      m_spaces[i][j] = nullptr;
+    }
+  }
+  vector<vector<int>> rooms;
+  
+  createRooms(rooms, 350);
+  
+  int distances[rooms.size()][rooms.size()];
+  int corridorTypes[rooms.size()][rooms.size()];
+  
+  for (int i = 0; i < rooms.size()-1; i++) {
+    for (int j = i+1; j < rooms.size(); j++) {
+      int distance = NUM_COLS;
+      int corridorType = -1;
+      findClosestRoom(distance, corridorType, rooms, i, j, 0, 0, 1, 7, 2);
+      findClosestRoom(distance, corridorType, rooms, i, j, 2, 0, 1, 6, 3);
+      findClosestRoom(distance, corridorType, rooms, i, j, 1, 1, 0, 0, 5);
+      findClosestRoom(distance, corridorType, rooms, i, j, 3, 1, 0, 1, 4);
+      distances[i][j] = distance;
+      corridorTypes[i][j] = corridorType;
+      
+      distance = NUM_COLS;
+      corridorType = -1;
+      findClosestRoom(distance, corridorType, rooms, j, i, 0, 0, 1, 7, 2);
+      findClosestRoom(distance, corridorType, rooms, j, i, 2, 0, 1, 6, 3);
+      findClosestRoom(distance, corridorType, rooms, j, i, 1, 1, 0, 0, 5);
+      findClosestRoom(distance, corridorType, rooms, j, i, 3, 1, 0, 1, 4);
+      distances[j][i] = distance;
+      corridorTypes[j][i] = corridorType;
+      
+      
+//      if (rooms[x][0] >= rooms[y][0] and rooms[x][0] <= rooms[y][2]) {
+//        if (rooms[x][1] > rooms[y][1]) {
+//          arr1[x][y] = rooms[x][1] - rooms[y][3];
+//          arr2[x][y] = 7;
+//        } else {
+//          arr1[x][y] = rooms[y][1] - rooms[x][3];
+//          arr2[x][y] = 2;
+//        }
+//      }
+//
+//      if (rooms[y][0] >= rooms[x][0] and rooms[y][0] <= rooms[x][2]) {
+//        if (rooms[y][1] > rooms[x][1]) {
+//          arr1[y][x] = rooms[y][1] - rooms[x][3];
+//          arr2[y][x] = 7;
+//        } else {
+//          arr1[y][x] = rooms[x][1] - rooms[y][3];
+//          arr2[y][x] = 2;
+//        }
+//      }
+//
+//      if (rooms[x][2] >= rooms[y][0] and rooms[x][2] <= rooms[y][2]) {
+//        if (rooms[x][1] > rooms[y][1]) {
+//          arr1[x][y] = rooms[x][1] - rooms[y][3];
+//          arr2[x][y] = 6;
+//        } else {
+//          arr1[x][y] = rooms[y][1] - rooms[x][3];
+//          arr2[x][y] = 3;
+//        }
+//      }
+//
+//      if (rooms[x][1] >= rooms[y][1] and rooms[x][1] <= rooms[y][3]) {
+//        if (rooms[x][0] > rooms[y][0]) {
+//          arr1[x][y] = rooms[x][0] - rooms[y][2];
+//          arr2[x][y] = 0;
+//        } else {
+//          arr1[x][y] = rooms[y][0] - rooms[x][2];
+//          arr2[x][y] = 5;
+//        }
+//      }
+//
+//      if (rooms[x][3] >= rooms[y][1] and rooms[x][3] <= rooms[y][3]) {
+//        if (rooms[x][0] > rooms[y][0]) {
+//          arr1[x][y] = rooms[x][0] - rooms[y][2];
+//          arr2[x][y] = 1;
+//        } else {
+//          arr1[x][y] = rooms[y][0] - rooms[x][2];
+//          arr2[x][y] = 4;
+//        }
+//      }
+    }
+  }
+  
+  for (int x = 0; x < rooms.size(); x++) {
+    int currentRoom;
+    int shortestDist = NUM_COLS;
+    int corridorType = -1;
+    
+    for (int y = 0; y < rooms.size(); y++) {
+      if (x == y) {
+        continue;
+      }
+      
+      if (x == 1) {
+        cout << "";
+      }
+      
+      if (corridorTypes[x][y] > 0 and distances[x][y] < shortestDist) {
+        shortestDist = distances[x][y];
+        currentRoom = x;
+        corridorType = corridorTypes[x][y];
+        distances[y][x] = 200;
+        corridorTypes[y][x] = -1;
+      }
+      
+//      if (corridorTypes[y][x] > 0 and distances[y][x] < shortestDist) {
+//        shortestDist = distances[y][x];
+//        currentRoom = y;
+//        corridorType = corridorTypes[y][x];
+//      }
+      
+      switch (corridorType) {
+        case 0:
+          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][1], false, -1);
+          break;
+        case 1:
+          createCorridors(rooms, rooms[currentRoom][0]-1, rooms[currentRoom][3]-1, false, -1);
+          break;
+        case 2:
+          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][3], true, 1);
+          break;
+        case 3:
+          createCorridors(rooms, rooms[currentRoom][2]-1, rooms[currentRoom][3], true, 1);
+          break;
+        case 4:
+          createCorridors(rooms, rooms[currentRoom][2], rooms[currentRoom][3]-1, false, 1);
+          break;
+        case 5:
+          createCorridors(rooms, rooms[currentRoom][2], rooms[currentRoom][1], false, 1);
+          break;
+        case 6:
+          createCorridors(rooms, rooms[currentRoom][2]-1, rooms[currentRoom][1]-1, true, -1);
+          break;
+        case 7:
+          createCorridors(rooms, rooms[currentRoom][0], rooms[currentRoom][1]-1, true, -1);
+          break;
+      }
+    }
+  }
+}
+
+void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
   int totalArea = 0;
   int MIN_ROW_DIM = 5;
   int MIN_COL_DIM = 7;
-  vector<vector<int>> rooms;
   
-  while(totalArea < 350) {
+  while(totalArea < desiredArea) {
     int startRow = randInt(NUM_ROWS-2-MIN_ROW_DIM)+1;
     int startCol = randInt(NUM_COLS-2-MIN_COL_DIM)+1;
     int endRow = startRow+randInt(6)+MIN_ROW_DIM;
@@ -133,9 +279,11 @@ void Dungeon::createSpaces() {
       continue;
     }
     
-    for (int x = 0; x < rooms.size(); x++) {
-      if(rooms[x][0] >= startRow-1 and rooms[x][0] <= endRow+1 and rooms[x][1] >= startCol-1 and rooms[x][1] <= endCol+1) {
-        goto cont;
+    for (int i = 0; i < NUM_ROWS; i++) {
+      for (int j = 0; j < NUM_COLS; j++) {
+        if(m_spaces[i][j] != nullptr and i >= startRow-1 and i <= endRow+1 and j >= startCol-1 and j <= endCol+1) {
+          goto cont;
+        }
       }
     }
 
@@ -145,14 +293,41 @@ void Dungeon::createSpaces() {
         Space* newSpace = new Space(this, i, j);
         m_spaces[i][j] = newSpace;
         m_maze[i][j] = newSpace;
-        rooms.push_back({i, j});
       }
     }
     
     totalArea += (endRow-startRow) * (endCol-startCol);
-    displayLevel();
+    displayLevel(); // TODO: delete this line
     cont:;
   }
+}
+              
+void Dungeon::findClosestRoom(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n) {
+  if (rooms[x][a] >= rooms[y][b] and rooms[x][a] <= rooms[y][b+2]) {
+    if (rooms[x][c] > rooms[y][c]) {
+      distance = rooms[x][c] - rooms[y][c+2];
+      corridorType = m;
+    } else {
+      distance = rooms[y][c] - rooms[x][c+2];
+      corridorType = n;
+    }
+  }
+}
+
+void Dungeon::createCorridors(vector<vector<int>> &rooms, int curRow, int curCol, bool changeCol, int delta) {
+  while (isWall(curRow, curCol) or curCol == 0 or curCol == NUM_COLS or curRow == 0 or curRow == NUM_ROWS) {
+    Space* newSpace = new Space(this, curRow, curCol);
+    m_spaces[curRow][curCol] = newSpace;
+    m_maze[curRow][curCol] = newSpace;
+    
+    if (changeCol) {
+      curCol += delta;
+    } else {
+      curRow += delta;
+    }
+  }
+  
+  displayLevel();
 }
 
 void Dungeon::createPlayer() {
