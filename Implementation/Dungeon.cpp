@@ -312,9 +312,14 @@ void Dungeon::setObjectPosition(Object* object) {
   int posRow = -1;
   int posCol = -1;
   generateRandomPosition(object, posRow, posCol);
-  
   object->setPosition(posRow, posCol);
-  m_maze[posRow][posCol] = object;
+  
+  if (object->isGameObject() and isActor(posRow, posCol)) {
+    Actor* actor = (Actor*)getObject(posRow, posCol);
+    actor->setOverGameObject((GameObject*)object);
+  } else {
+    m_maze[posRow][posCol] = object;
+  }
 }
 
 void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {

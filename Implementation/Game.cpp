@@ -47,7 +47,7 @@ void Game::play() {
     
     cout << "Enter command (or 'h' for help): ";
     input = getCharacter();
-    cout << endl;
+    cout << endl << endl;
     
     bool didPlayerMove = false;
     switch(input) {
@@ -68,8 +68,11 @@ void Game::play() {
         displayHelp();
         break;
       case 'q':
-        
-        m_dungeon->endGame("Player quit the game.");
+        cout << "Re-enter 'q' to quit or any other key to continue: ";
+        input = getCharacter();
+        if (input == 'q') {
+          m_dungeon->endGame("Player quit the game.");
+        }
         break;
       case 'c':
         m_dungeon->getPlayer()->godMode();
