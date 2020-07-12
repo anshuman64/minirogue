@@ -90,11 +90,11 @@ void Player::calculateMove(char input) {
 }
 
 // Return true if item picked up to set didPlayerMove in Game.cpp
-bool Player::pickGameObject() {
+bool Player::takeAction() {
   GameObject* gameObject = getOverGameObject();
   
   if (gameObject == nullptr) {
-    getDungeon()->addAction("No item to pick up.");
+    getDungeon()->addAction("No action to take.");
     return false;
   }
   
@@ -114,6 +114,12 @@ bool Player::pickGameObject() {
     }
   }
   
+  if (getOverGameObject()->isStairs()) {
+    setOverGameObject(nullptr);
+    getDungeon()->addAction("Player moved to next level of dungeon!");
+    getDungeon()->nextLevel();
+  }
+  
   if (m_inventory.size() > 25) {
     getDungeon()->addAction("Inventory full.");
     return false;
@@ -129,17 +135,6 @@ bool Player::pickGameObject() {
   setOverGameObject(nullptr);
   getDungeon()->addAction("Player picked up a " + gameObject->getName() + ".");
   return true;
-}
-
-void Player::descendStairs() {
-  if (getOverGameObject() == nullptr or !getOverGameObject()->isStairs()) {
-    getDungeon()->addAction("No stairs to descend.");
-    return;
-  }
-
-  setOverGameObject(nullptr);
-  getDungeon()->addAction("Player moved to next level of dungeon!");
-  getDungeon()->nextLevel();
 }
 
 void Player::godMode() {

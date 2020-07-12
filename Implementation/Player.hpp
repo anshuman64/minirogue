@@ -22,8 +22,7 @@ public:
   
   // Actions
   void calculateMove(char input);
-  bool pickGameObject();
-  void descendStairs();
+  bool takeAction();
   void godMode();
   
   // Display

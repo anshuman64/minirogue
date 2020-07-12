@@ -34,6 +34,8 @@ Game::~Game() {
 void Game::play() {
   char input;
   
+  displayHelp();
+  
   while (true) {
     m_dungeon->displayLevel();
     m_dungeon->getPlayer()->displayStats();
@@ -56,29 +58,21 @@ void Game::play() {
         m_dungeon->getPlayer()->calculateMove(input);
         didPlayerMove = true;
         break;
-      case 'c':
-        m_dungeon->getPlayer()->godMode();
-        break;
-      case 'g':
-        didPlayerMove = m_dungeon->getPlayer()->pickGameObject();
-        break;
-      case 'i':
-        m_dungeon->getPlayer()->displayInventory();
+      case 'f':
+        didPlayerMove = m_dungeon->getPlayer()->takeAction();
         break;
       case 'e':
-        m_dungeon->getPlayer()->displayWeapons();
+        m_dungeon->getPlayer()->displayInventory();
         break;
       case 'h':
         displayHelp();
         break;
-      case 'z':
-        m_dungeon->getPlayer()->descendStairs();
-        break;
-      case 'r':
-        m_dungeon->getPlayer()->displayScrolls();
-        break;
       case 'q':
+        
         m_dungeon->endGame("Player quit the game.");
+        break;
+      case 'c':
+        m_dungeon->getPlayer()->godMode();
         break;
     }
     
@@ -91,19 +85,27 @@ void Game::play() {
 void Game::displayHelp() {
   clearScreen();
   
-  cout << "Help - MiniRogue: Clear the dungeon and obtain the golden idol! Defeat monsters, find treasures, and descend deeper into the dungeon's depths." << endl << endl;
+  cout << "**********************************************************************" << endl;
+  cout << "*                                                                    *" << endl;
+  cout << "*  **     **  ****  **   **  ****  ****  *****  *****  **  **  ****  *" << endl;
+  cout << "*  **** ****   **   ***  **   **   ** *  ** **  **     **  **  **    *" << endl;
+  cout << "*  ** *** **   **   ** * **   **   ***   ** **  ** **  **  **  ****  *" << endl;
+  cout << "*  **  *  **   **   **  ***   **   ** *  ** **  **  *  ******  **    *" << endl;
+  cout << "*  **     **  ****  **   **  ****  **  * *****  *****  ******  ****  *" << endl;
+  cout << "*                                                                    *" << endl;
+  cout << "**********************************************************************" << endl;
+
+  cout << endl << "MiniRogue: Clear the dungeon and obtain the golden idol! Defeat monsters, find treasures, and descend deeper into the dungeon's depths." << endl << endl;
   
-  cout << "Keyboard commands: " << endl;
-  cout << "w,a,s,d. Move player" << endl;
-  cout << "g. Pickup item" << endl;
-  cout << "i. Display inventory" << endl;
-  cout << "e. Equip weapon" << endl;
-  cout << "s. Use scroll" << endl;
-  cout << "c. Enter god mode" << endl;
-  cout << "h. Display help" << endl;
-  cout << "q. Quit game" << endl;
+  cout << "Keyboard commands:" << "\t\t\t"  << "Game Symbols:" << endl;
+  cout << "w,a,s,d. Move player" << "\t\t"  << "@. Player" << endl;
+  cout << "e. Display inventory"  << "\t\t" << "B,D,G,S. Monsters" << endl;
+  cout << "f. Take action"  << "\t\t\t\t\t" << "). Weapon" << endl;
+  cout << "h. Display help"  << "\t\t\t\t " << "?. Scroll" << endl;
+  cout << "q. Quit game"  << "\t\t\t\t\t\t" << ">. Stairs" << endl;
+  cout << "c. Enter god mode"  << "\t\t\t " << "&. Golden Idol" << endl;
   
-  cout << endl << "Press any key to continue.";
+  cout << endl << "Press any key to continue: " << endl;
   
   getCharacter();
 }

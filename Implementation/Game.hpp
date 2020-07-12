@@ -24,10 +24,11 @@ public:
   ~Game();
   
   void play();
-  void displayHelp();
   
 private:
-  Dungeon* m_dungeon; 
+  Dungeon* m_dungeon;
+  
+  void displayHelp();
 };
 
 #endif /* Game_hpp */
