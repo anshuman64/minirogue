@@ -92,6 +92,10 @@ bool Dungeon::isGameObject(int rowPos, int colPos) {
   return m_maze[rowPos][colPos]->isGameObject();
 }
 
+bool Dungeon::isMonstersRemaining() {
+  return m_monsters.size() > 0;
+}
+
 
 // ******************************
 // * Helpers - Create Level
@@ -118,7 +122,7 @@ void Dungeon::createSpaces() {
   vector<vector<int>> rooms;
   
   // Generate non-overlapping rooms
-  createRooms(rooms, 350); // TODO: revert
+  createRooms(rooms, 300); // TODO: revert
   
   int distances[rooms.size()][rooms.size()];
   int corridorTypes[rooms.size()][rooms.size()];
@@ -274,8 +278,7 @@ void Dungeon::createMonsters() {
   int numMonsters = randInt(m_level * 5 - 1) + 2;
   
   for (int i = 0; i <= numMonsters; i++) {
-//    Monster* addMonster = generateRandomMonster(); TODO: revert
-    Monster* addMonster = new Goblin(this);
+    Monster* addMonster = generateRandomMonster();
     m_monsters.push_back(addMonster);
     setObjectPosition(addMonster);
   }
@@ -456,7 +459,9 @@ void Dungeon::displayActions() {
 }
 
 void Dungeon::addAction(string action) {
-  m_actions.push(action);
+  if (!is_gameOver) {
+    m_actions.push(action);
+  }
 }
 
 

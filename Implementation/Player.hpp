@@ -29,8 +29,6 @@ public:
   // Display
   void displayStats();
   void displayInventory();
-  void displayWeapons();
-  void displayScrolls();
   
 private:
   bool                is_godMode;

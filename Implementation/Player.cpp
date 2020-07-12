@@ -105,8 +105,13 @@ bool Player::pickGameObject() {
   }
   
   if (gameObject->isGoldenIdol()) {
-    getDungeon()->endGame("Player picked up the Golden Idol. You win!");
-    return false;
+    if (getDungeon()->isMonstersRemaining()) {
+      getDungeon()->addAction("Defeat all monsters on the level to pick up the Golden Idol.");
+      return false;
+    } else {
+      getDungeon()->endGame("Player picked up the Golden Idol. You win!");
+      return false;
+    }
   }
   
   if (m_inventory.size() > 25) {
@@ -127,8 +132,8 @@ bool Player::pickGameObject() {
 }
 
 void Player::descendStairs() {
-  if (!getOverGameObject()->isStairs()) {
-    getDungeon()->addAction("No stairs to descend");
+  if (getOverGameObject() == nullptr or !getOverGameObject()->isStairs()) {
+    getDungeon()->addAction("No stairs to descend.");
     return;
   }
 
@@ -175,59 +180,22 @@ void Player::displayInventory() {
     cout << (char)(letterIndex + i) << ". " << m_inventory[i]->getName() << " - " << m_inventory[i]->getDescription() << endl;
   }
   
-  cout << endl << "Press any key to continue." << endl;
-
-  getCharacter();
-}
-
-void Player::displayWeapons() {
-  clearScreen();
+  cout << endl << "Press letter to equip weapon / use scroll or any other key to continue." << endl;
   
-  cout << "Weapons:" << endl;
-  
-  char letterIndex = 'a';
-  for (int i = 0; i < m_weapons.size(); i++) {
-    cout << (char)(letterIndex + i) << ". " << m_weapons[i]->getName() << " - " << m_weapons[i]->getDescription() << endl;
-  }
-  
-  cout << endl << "Press letter to equip or any other key to continue." << endl;
-
   char input = getCharacter();
   int inputIndex = input - letterIndex;
   
-  if (inputIndex < m_weapons.size()) {
-    setWeapon(m_weapons[inputIndex]);
-    getDungeon()->addAction("Player equipped " + m_weapons[inputIndex]->getName() + ".");
-  }
-}
-
-void Player::displayScrolls() {
-  clearScreen();
-  
-  cout << "Scrolls:" << endl;
-  
-  char letterIndex = 'a';
-  for (int i = 0; i < m_scrolls.size(); i++) {
-    cout << (char)(letterIndex + i) << ". " << m_scrolls[i]->getName() << " - " << m_scrolls[i]->getDescription() << endl;
-  }
-  
-  cout << endl << "Press letter to use or any other key to continue." << endl;
-
-  char input = getCharacter();
-  int inputIndex = input - letterIndex;
-  
-  if (inputIndex < m_scrolls.size()) {
-    Scroll* scrollToUse = m_scrolls[inputIndex];
-    scrollToUse->useScroll();
-    getDungeon()->addAction(scrollToUse->getActionString());
-    
-    m_scrolls.erase(m_scrolls.begin() + inputIndex);
-    for (int i = 0; i < m_inventory.size(); i++) {
-      if (m_inventory[i] == scrollToUse) {
-        m_inventory.erase(m_inventory.begin() + i);
-      }
+  if (inputIndex < m_inventory.size()) {
+    if (m_inventory[inputIndex]->isWeapon()) {
+      setWeapon((Weapon*)m_inventory[inputIndex]);
+      getDungeon()->addAction("Player equipped " + m_inventory[inputIndex]->getName() + ".");
+    } else if (m_inventory[inputIndex]->isScroll()) {
+      Scroll* scrollToUse = (Scroll*)m_inventory[inputIndex];
+      scrollToUse->useScroll();
+      getDungeon()->addAction(scrollToUse->getActionString());
+      
+      m_inventory.erase(m_inventory.begin() + inputIndex);
+      delete scrollToUse;
     }
-    
-    delete scrollToUse;
   }
 }

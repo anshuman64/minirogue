@@ -46,6 +46,7 @@ public:
   bool isActor(int rowPos, int colPos);
   bool isPlayer(int rowPos, int colPos);
   bool isGameObject(int rowPos, int colPos);
+  bool isMonstersRemaining();
     
   // Next & Update Level
   void nextLevel();

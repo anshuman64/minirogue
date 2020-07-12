@@ -143,12 +143,13 @@ void Actor::attack(Actor* attacker, Actor* defender) {
     defender->changeHP(-1 * damagePoints);
     actionString += "hits for " + to_string(damagePoints) + " damage.";
     getDungeon()->addAction(actionString); // Place here for proper action order
-    checkIsDead(defender);
     
     if (attackerWeapon->getName() == "Magic Fangs" and trueWithProbability(0.2)) {
       defender->changeAsleep(randInt(5)+2);
       getDungeon()->addAction(defender->getName() + " fell asleep by the power of " + attacker->getName() + "'s Magic Fangs!");
     }
+    
+    checkIsDead(defender);
   } else {
     actionString += "misses.";
     getDungeon()->addAction(actionString);
