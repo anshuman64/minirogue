@@ -285,7 +285,7 @@ void Dungeon::createMonsters() {
 }
 
 void Dungeon::createGameObjects() {
-  int numGameObjects = randInt(2) + 2;
+  int numGameObjects = randInt(2) + m_level;
   
   for (int i = 0; i < numGameObjects; i++) {
     GameObject* addGameObject = generateRandomGameObject();
@@ -337,7 +337,7 @@ void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {
 
 Monster* Dungeon::generateRandomMonster() {
   int numChoices = m_level >=3 ? 4 : 3;
-  switch (randInt(numChoices-1)) {
+  switch (randInt(numChoices)) {
     case 0:
       return new Bogeyman(this);
       break;

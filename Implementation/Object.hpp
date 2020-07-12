@@ -11,12 +11,12 @@
 
 #include <stdio.h>
 #include <iostream>
-
 #include "Dungeon.hpp"
 
 using namespace std;
 
 
+// Parent class for all GameObjects, Monsters, and Player. Contains position, name, and symbol.
 class Object {
 public:
   // Constructor
@@ -26,10 +26,10 @@ public:
   
   // Accessors
   Dungeon* getDungeon();
-  int  getRowPosition();
-  int  getColPosition();
-  char getSymbol();
-  string getName();
+  int      getRowPosition();
+  int      getColPosition();
+  char     getSymbol();
+  string   getName();
   
   // Accessors - Booleans
   bool isActor();
@@ -50,13 +50,14 @@ private:
   char     m_symbol;
 };
 
-
+// Wall object class
 class Wall : public Object {
 public:
   Wall(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, '#', "Wall", rowPos, colPos) {}
 };
 
 
+// Space (walkable area) object class
 class Space : public Object {
 public:
   Space(Dungeon* dungeon, int rowPos, int colPos) : Object(dungeon, ' ', "Space", rowPos, colPos) {}

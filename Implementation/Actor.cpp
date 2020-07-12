@@ -7,6 +7,7 @@
 //
 
 #include "Actor.hpp"
+#include "Dungeon.hpp"
 #include "Weapon.hpp"
 #include "utilities.hpp"
 
@@ -15,7 +16,7 @@
 // * Constructor
 // ******************************
 
-Actor::Actor(Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity) : Object(dungeon, symbol, name), m_hp(hp), m_maxHP(hp), m_armor(armor), m_strength(strength), m_dexterity(dexterity), m_overGameObject(nullptr), m_turnsAsleep(0) {}
+Actor::Actor(Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity) : Object(dungeon, symbol, name), m_hp(hp), m_maxHP(hp), m_armor(armor), m_strength(strength), m_dexterity(dexterity), m_turnsAsleep(0), m_overGameObject(nullptr), m_weapon(nullptr) {}
 
 
 // ******************************
@@ -119,36 +120,49 @@ void Actor::setOverGameObject(GameObject* gameObject) {
 // * Combat
 // ******************************
 
+// Moves player from current cell to next cell
 void Actor::move(int curRow, int curCol, int nextRow, int nextCol) {
+  // Sets current cell to Space or GameObject (if Actor isOverGameObject)
   getDungeon()->updateCurrentCell(this, curRow, curCol);
+  
+  // Remove overGameObject if exists
   if (isOverGameObject()) {
     setOverGameObject(nullptr);
   }
   
+  // Set overGameObject if exists on next cell
   if (getDungeon()->isGameObject(nextRow, nextCol)) {
     setOverGameObject((GameObject*)getDungeon()->getObject(nextRow, nextCol));
   }
   
+  // Set position of this Actor
   setPosition(nextRow, nextCol);
+  
+  // Set next cell to this Actor
   getDungeon()->updateNextCell(this, nextRow, nextCol);
 }
 
 void Actor::attack(Actor* attacker, Actor* defender) {
   Weapon* attackerWeapon = attacker->getWeapon();
-  bool hits = isHit(attacker, defender);
   string actionString = attacker->getName() + " " + attackerWeapon->getActionString() + " " + attackerWeapon->getName() + " at " + defender->getName() + " and ";
   
+  // Determine if attacker hits
+  bool hits = isHit(attacker, defender);
+  
   if (hits) {
+    // Calculate amount of damage
     int damagePoints = randInt(attacker->getStrength() + attackerWeapon->getDamage());
     defender->changeHP(-1 * damagePoints);
     actionString += "hits for " + to_string(damagePoints) + " damage.";
-    getDungeon()->addAction(actionString); // Place here for proper action order
+    getDungeon()->addAction(actionString); // WARNING: Place here for proper action order
     
+    // Determine if Magic Fangs put defender to sleep
     if (attackerWeapon->getName() == "Magic Fangs" and trueWithProbability(0.2)) {
       defender->changeAsleep(randInt(5)+2);
       getDungeon()->addAction(defender->getName() + " fell asleep by the power of " + attacker->getName() + "'s Magic Fangs!");
     }
     
+    // Determine if the defender is dead
     checkIsDead(defender);
   } else {
     actionString += "misses.";
@@ -156,6 +170,7 @@ void Actor::attack(Actor* attacker, Actor* defender) {
   }
 }
 
+// Determine if attacker (generally this Actor) hits defender
 bool Actor::isHit(Actor* attacker, Actor* defender) {
   int attackerPoints = attacker->getDexterity() + attacker->getWeapon()->getDexBonus();
   int defenderPoints = defender->getDexterity() + defender->getArmor();
@@ -170,8 +185,10 @@ bool Actor::isHit(Actor* attacker, Actor* defender) {
 void Actor::checkIsDead(Actor* actor) {
   if (actor->getHP() == 0) {
     if (actor->isMonster()) {
+      // If mosnter is dead, destroy monster from dungeon
       getDungeon()->destroyMonster((Monster*)actor);
     } else if (actor->isPlayer()) {
+      // If player is dead, end the game
       getDungeon()->endGame("Player was defeated. Game over!");
     }
   }

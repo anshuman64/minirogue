@@ -16,6 +16,7 @@
 class Weapon;
 class GameObject;
 
+// Parent class for Player or Monsters. Includes methods for move and combat
 class Actor : public Object {
 public:
   // Constructor
@@ -57,12 +58,12 @@ public:
   bool checkIsAsleep();
   
 private:
-  int  m_hp;
-  int  m_maxHP;
-  int  m_armor;
-  int  m_strength;
-  int  m_dexterity;
-  int  m_turnsAsleep;
+  int m_hp;
+  int m_maxHP;
+  int m_armor;
+  int m_strength;
+  int m_dexterity;
+  int m_turnsAsleep;
   
   Weapon*     m_weapon;
   GameObject* m_overGameObject;

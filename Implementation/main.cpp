@@ -15,8 +15,8 @@ using namespace std;
 
 int main()
 {
-  srand(11);
-//  srand(static_cast<unsigned int>(time(0)));
+  srand(static_cast<unsigned int>(time(0)));
+//  srand(13); // Uncomment for testing
 
   Game g;
   g.play();

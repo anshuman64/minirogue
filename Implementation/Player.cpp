@@ -18,15 +18,12 @@
 Player::Player(Dungeon* dungeon) : Actor(dungeon, '@', "Player", 20, 2, 2, 2), is_godMode(false) {
   Weapon* startWeapon = new ShortSword(dungeon);
   m_inventory.push_back(startWeapon);
-  m_weapons.push_back(startWeapon);
   setWeapon(startWeapon);
 }
 
 Player::~Player() {
-  delete getWeapon();
-  
-  for (int i = 0; i < m_weapons.size(); i++) {
-    delete m_weapons[i];
+  for (int i = 0; i < m_inventory.size(); i++) {
+    delete m_inventory[i];
   }
 }
 
@@ -35,7 +32,7 @@ Player::~Player() {
 // ******************************
 
 void Player::calculateMove(char input) {
-  // If asleep
+  // If asleep, do nothing and end turn
   if (checkIsAsleep()) {
     return;
   }
@@ -51,6 +48,7 @@ void Player::calculateMove(char input) {
   int nextCol = curCol;
   string directionString;
   
+  // Determine next cell Player is trying to move
   switch (input) {
     case ARROW_LEFT:
       nextCol--;
@@ -70,19 +68,23 @@ void Player::calculateMove(char input) {
       break;
   }
   
+  // If next cell isWall, block Player
   if (getDungeon()->isWall(nextRow, nextCol)) {
     getDungeon()->addAction("Player tried moving " + directionString + " but was blocked by a wall.");
   }
   
+  // If next cell isSpace, move Player to space
   else if (getDungeon()->isSpace(nextRow, nextCol)) {
     move(curRow, curCol, nextRow, nextCol);
     getDungeon()->addAction("Player moved " + directionString + ".");
   }
   
+  // If next cell isMonster, attack Monster
   else if (getDungeon()->isMonster(nextRow, nextCol)) {
     attack(this, (Actor*)getDungeon()->getObject(nextRow, nextCol));
   }
   
+  // If next cell isGameObject, move Player onto GameObject
   else if (getDungeon()->isGameObject(nextRow, nextCol)) {
     move(curRow, curCol, nextRow, nextCol);
     getDungeon()->addAction("Player moved " + directionString + " onto " + getOverGameObject()->getName() + ".");
@@ -93,31 +95,36 @@ void Player::calculateMove(char input) {
 bool Player::takeAction() {
   GameObject* gameObject = getOverGameObject();
   
+  // If not over a GameObject, do nothing
   if (gameObject == nullptr) {
     getDungeon()->addAction("No action to take.");
     return false;
   }
   
-  if (isAsleep()) {
-    getDungeon()->endGame("Player is asleep and cannot move.");
-    changeAsleep(-1);
+  // If asleep, do nothing and end turn
+  if (checkIsAsleep()) {
     return true;
   }
   
+  // If over Golden Idol...
   if (gameObject->isGoldenIdol()) {
+    // If monsters are remaining, prompt user to defeat all monsters
     if (getDungeon()->isMonstersRemaining()) {
       getDungeon()->addAction("Defeat all monsters on the level to pick up the Golden Idol.");
       return false;
     } else {
+      // Else, Player wins game
       getDungeon()->endGame("Player picked up the Golden Idol. You win!");
       return false;
     }
   }
   
+  // If over Stairs, descend Stairs to next level of dungeon
   if (getOverGameObject()->isStairs()) {
     setOverGameObject(nullptr);
     getDungeon()->addAction("Player moved to next level of dungeon!");
     getDungeon()->nextLevel();
+    return false;
   }
   
   if (m_inventory.size() > 25) {
@@ -125,18 +132,14 @@ bool Player::takeAction() {
     return false;
   }
   
+  // Else, GameObject is an item to be picked up
   m_inventory.push_back(gameObject);
-  if (gameObject->isWeapon()) {
-    m_weapons.push_back((Weapon*)gameObject);
-  } else if (gameObject->isScroll()) {
-    m_scrolls.push_back((Scroll*)gameObject);
-  }
-  
   setOverGameObject(nullptr);
   getDungeon()->addAction("Player picked up a " + gameObject->getName() + ".");
   return true;
 }
 
+// Max all stats to allow Player to clear the dungeon
 void Player::godMode() {
   if (is_godMode) {
     getDungeon()->addAction("God Mode already activated.");
@@ -148,7 +151,7 @@ void Player::godMode() {
   changeArmor(MAX_STATS);
   changeStrength(MAX_STATS);
   changeDexterity(MAX_STATS);
-  getDungeon()->addAction("Player feels the strength of the Almighty.");
+  getDungeon()->addAction("Player feels the strength of the Almighty. All stats are maxed!");
   is_godMode = true;
 }
 
@@ -168,23 +171,28 @@ void Player::displayStats() {
 void Player::displayInventory() {
   clearScreen();
   
+  // Prints inventory
   cout << "Inventory:" << endl;
-  
+
   char letterIndex = 'a';
   for (int i = 0; i < m_inventory.size(); i++) {
     cout << (char)(letterIndex + i) << ". " << m_inventory[i]->getName() << " - " << m_inventory[i]->getDescription() << endl;
   }
   
+  // Get input from Player to equip weapon, use scroll, or exit inventory
   cout << endl << "Press letter to equip weapon / use scroll or any other key to continue." << endl;
   
   char input = getCharacter();
   int inputIndex = input - letterIndex;
   
+  // If input is in range of inventory slots...
   if (inputIndex < m_inventory.size()) {
     if (m_inventory[inputIndex]->isWeapon()) {
+      // ...and isWeapon, equip weapon
       setWeapon((Weapon*)m_inventory[inputIndex]);
       getDungeon()->addAction("Player equipped " + m_inventory[inputIndex]->getName() + ".");
     } else if (m_inventory[inputIndex]->isScroll()) {
+      // ...and isScroll, use scroll
       Scroll* scrollToUse = (Scroll*)m_inventory[inputIndex];
       scrollToUse->useScroll();
       getDungeon()->addAction(scrollToUse->getActionString());

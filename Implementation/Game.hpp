@@ -10,16 +10,15 @@
 #define Game_hpp
 
 #include <stdio.h>
-#include "Dungeon.hpp"
 
 
 class Dungeon;
-class Player;
 
+
+// Game controller
 class Game {
 public:
   // Constructor
-  // TODO: implement constructor with parameter
   Game();
   ~Game();
   

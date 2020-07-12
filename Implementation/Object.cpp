@@ -8,6 +8,8 @@
 
 #include "Object.hpp"
 
+class Dungeon;
+
 // ******************************
 // * Constructor
 // ******************************

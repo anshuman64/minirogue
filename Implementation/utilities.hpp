@@ -11,8 +11,6 @@
 using namespace std;
 
 
-const list<char> SYMBOLS = {'B','D','G','S','@','#','>','&',')','?'};
-
 const int NUM_ROWS = 18;
 const int NUM_COLS = 70;
 

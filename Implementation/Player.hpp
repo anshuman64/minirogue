@@ -12,8 +12,12 @@
 #include <stdio.h>
 #include "Actor.hpp"
 
+
+class GameObject;
+class Weapon;
 class Scroll;
 
+// Player class. Moves, takes action, and holds inventory
 class Player : public Actor {
 public:
   // Constructor
@@ -32,8 +36,6 @@ public:
 private:
   bool                is_godMode;
   vector<GameObject*> m_inventory;
-  vector<Weapon*>     m_weapons;
-  vector<Scroll*>     m_scrolls;
 };
 
 #endif /* Player_hpp */
