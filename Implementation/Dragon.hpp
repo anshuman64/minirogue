@@ -35,25 +35,29 @@ public:
   // ******************************
   // * Actions
   // ******************************
+  
   void calculateMove() {
     if (checkIsAsleep()) {
       return;
     }
     
+    // Recover HP
     if (trueWithProbability(0.1)) {
       changeHP(1);
     }
     
+    // If next to Player, attack
     if (stepsToPlayer() == 1) {
       attack(this, (Actor*)getDungeon()->getPlayer());
     }
   }
 
+  // Randomly dropGameObject
   GameObject* dropGameObject() {
     if (!isOverGameObject()) {
       switch (randInt(5)) {
         case 0:
-          return new TeleportationScroll(getDungeon());
+          return new TeleportationScroll(getDungeon()); // deleted in Dungeon or Player (if picked up)
           break;
         case 1:
           return new HealthScroll(getDungeon());

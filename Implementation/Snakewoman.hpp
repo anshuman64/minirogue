@@ -34,18 +34,22 @@ public:
   // ******************************
   // * Actions
   // ******************************
+  
   void calculateMove() {
     if (checkIsAsleep()) {
       return;
     }
     
     if (stepsToPlayer() == 1) {
+      // If next to Player, attack
       attack(this, (Actor*)getDungeon()->getPlayer());
-    } else if (stepsToPlayer() <= 3) {
+    } else if (stepsToPlayer() <= SNAKEWOMAN_SMELL_RANGE) {
+      // Else if 3 steps from Player, attemptMove
       attemptMove();
     }
   }
 
+  // Randomly dropGameObject
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(0.3333)) {
       return new MagicFangs(getDungeon()); // deleted in Dungeon
@@ -53,8 +57,6 @@ public:
     
     return nullptr;
   }
-  
-private:
   
 };
 

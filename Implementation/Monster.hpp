@@ -13,6 +13,7 @@
 #include "Actor.hpp"
 
 
+// Parent class for all Monsters. Helps determine move.
 class Monster : public Actor {
 public:
   // Constructor

@@ -34,18 +34,22 @@ public:
   // ******************************
   // * Actions
   // ******************************
+  
   void calculateMove() {
     if (checkIsAsleep()) {
       return;
     }
     
     if (stepsToPlayer() == 1) {
+      // If next to Player, attack
       attack(this, (Actor*)getDungeon()->getPlayer());
-    } else if (stepsToPlayer() <= 5) {
+    } else if (stepsToPlayer() <= BOGEYMAN_SMELL_RANGE) {
+      // Else if 5 steps from Player, attemptMove
       attemptMove();
     }
   }
 
+  // Randomly dropGameObject
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(0.1)) {
       return new MagicAxe(getDungeon()); // deleted in Dungeon
@@ -53,8 +57,6 @@ public:
     
     return nullptr;
   }
-  
-private:
   
 };
 

@@ -22,6 +22,10 @@ const char ARROW_RIGHT = 'd';
 const char ARROW_UP    = 'w';
 const char ARROW_DOWN  = 's';
 
+const int BOGEYMAN_SMELL_RANGE = 5;
+const int SNAKEWOMAN_SMELL_RANGE = 3;
+const int GOBLIN_SMELL_RANGE = 10;
+
 char getCharacter();
 void clearScreen();
 int randInt(int limit);             // random int from 0 to limit-1
