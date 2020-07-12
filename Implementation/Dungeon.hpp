@@ -27,6 +27,7 @@ class Player;
 class Monster;
 class Weapon;
 
+// Class to represent level, including Player, Monsters, and GameObjects
 class Dungeon {
 public:
   // Constructor
@@ -55,7 +56,7 @@ public:
   void setObjectPosition(Object* object);
   void generateRandomPosition(Object* object, int &posRow, int &posCol);
   
-  // Display Level U Actions
+  // Display Level Actions
   void displayLevel();
   void displayActions();
   void addAction(string action);

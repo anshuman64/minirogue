@@ -23,10 +23,12 @@ private:
   string m_actionString;
 };
 
+
 class TeleportationScroll : public Scroll {
 public:
   TeleportationScroll(Dungeon* dungeon) : Scroll(dungeon, "Scroll of Teleportation", "Player is randomly moved to another place in the level", "You teleported! You feel your body wrenched in space and time.") {}
   
+  // Moves player to a randomly generated position
   virtual void useScroll() {
     Dungeon* dungeon = getDungeon();
     Player*  player  = dungeon->getPlayer();
@@ -43,6 +45,7 @@ class HealthScroll : public Scroll {
 public:
   HealthScroll(Dungeon* dungeon) : Scroll(dungeon, "Scroll of Enhance Health", "Increase max HP", "Your max HP increases! You feel your heart beating stronger.") {}
   
+  // Increases Player's MaxHP by random number
   virtual void useScroll() {
     getDungeon()->getPlayer()->changeMaxHP(randInt(6)+3);
   }
@@ -53,6 +56,7 @@ class ArmorScroll : public Scroll {
 public:
   ArmorScroll(Dungeon* dungeon) : Scroll(dungeon, "Scroll of Enhance Armor", "Increase armor rating", "Your armor increases! Your armor glows blue.") {}
   
+  // Increase Player's Armor by random number
   virtual void useScroll() {
     getDungeon()->getPlayer()->changeArmor(randInt(3)+1);
   }
@@ -63,6 +67,7 @@ class StrengthScroll : public Scroll {
 public:
   StrengthScroll(Dungeon* dungeon) : Scroll(dungeon, "Scroll of Enhance Strength", "Increase strength rating", "Your strength increases! Your muscles bulge.") {}
   
+  // Increases Player's Strength by random number
   virtual void useScroll() {
     getDungeon()->getPlayer()->changeStrength(randInt(3)+1);
   }
@@ -73,6 +78,7 @@ class DexterityScroll : public Scroll {
 public:
   DexterityScroll(Dungeon* dungeon) : Scroll(dungeon, "Scroll of Enhance Dexterity", "Increase dexterity rating", "Your dexterity increases! You feel like less of a klutz.") {}
   
+  // Increases Player's Dexterity by 1
   virtual void useScroll() {
     getDungeon()->getPlayer()->changeDexterity(1);
   }

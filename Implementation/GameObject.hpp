@@ -18,8 +18,10 @@ public:
   // ******************************
   // * Constructor
   // ******************************
+
   GameObject(Dungeon* dungeon, char symbol, string name) : Object(dungeon, symbol, name) {}
   
+  // Constructor for weapons and scrolls
   GameObject(Dungeon* dungeon, char symbol, string name, string description, string actionString) : Object(dungeon, symbol, name), m_description(description), m_actionString(actionString) {}
   
   virtual ~GameObject() {}
