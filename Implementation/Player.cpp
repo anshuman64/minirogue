@@ -16,12 +16,19 @@
 // * Constructor
 // ******************************
 Player::Player(Dungeon* dungeon) : Actor(dungeon, '@', "Player", 20, 2, 2, 2), is_godMode(false) {
-  Weapon* startWeapon = new ShortSword(dungeon);
+  Weapon* startWeapon = new ShortSword(dungeon); // deleted in ~Actor
   m_inventory.push_back(startWeapon);
   setWeapon(startWeapon);
 }
 
-Player::~Player() {}
+Player::~Player() {
+  // Delete all items in inventory
+  while (!m_inventory.empty()) {
+    Object* toDelete = m_inventory.back();
+    m_inventory.pop_back();
+    delete toDelete;
+  }
+}
 
 // ******************************
 // * Actions
@@ -131,6 +138,7 @@ bool Player::takeAction() {
   // Else, GameObject is an item to be picked up
   m_inventory.push_back(gameObject);
   setOverGameObject(nullptr);
+  getDungeon()->pickUpGameObject(gameObject);
   getDungeon()->addAction("Player picked up a " + gameObject->getName() + ".");
   return true;
 }

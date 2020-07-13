@@ -50,7 +50,7 @@ public:
   // Randomly dropGameObject
   GameObject* dropGameObject() {
     if (!isOverGameObject() and trueWithProbability(0.1)) {
-      return new MagicAxe(getDungeon()); // deleted in Dungeon
+      return new MagicAxe(getDungeon()); // deleted in Dungeon::resetLevel or Dungeon::pickUpGameObject
     }
     
     return nullptr;

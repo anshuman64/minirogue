@@ -20,7 +20,7 @@ using namespace std;
 // ******************************
 
 Game::Game() {
-  m_dungeon = new Dungeon();
+  m_dungeon = new Dungeon(); // deleted in ~Game
 }
 
 Game::~Game() {

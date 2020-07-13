@@ -105,7 +105,7 @@ void Dungeon::createWalls() {
   // Create a wall for every space in the level
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
-      Wall* newWall = new Wall(this, i, j);
+      Wall* newWall = new Wall(this, i, j); // deleted in resetLevel
       m_walls.push_back(newWall);
       m_maze[i][j] = newWall;
     }
@@ -225,7 +225,7 @@ void Dungeon::createRooms(vector<vector<int>> &rooms) {
     rooms.push_back({startRow, startCol, endRow-1, endCol-1});
     for (int i = startRow; i < endRow; i++) {
       for (int j = startCol; j < endCol; j++) {
-        Space* newSpace = new Space(this, i, j);
+        Space* newSpace = new Space(this, i, j); // deleted in resetLevel
         m_spaces[i][j] = newSpace;
         m_maze[i][j] = newSpace;
       }
@@ -263,7 +263,7 @@ void Dungeon::createCorridors(int curRow, int curCol, bool changeCol, int delta)
   // While cell isWall and is not on the edge of the level
   while (isWall(curRow, curCol) and curRow > 0 and curRow < NUM_ROWS and curCol > 0 and curCol < NUM_COLS) {
     // Create a new space at current cell
-    Space* newSpace = new Space(this, curRow, curCol);
+    Space* newSpace = new Space(this, curRow, curCol); // deleted in resetLevel
     m_spaces[curRow][curCol] = newSpace;
     m_maze[curRow][curCol] = newSpace;
     
@@ -282,7 +282,7 @@ void Dungeon::createCorridors(int curRow, int curCol, bool changeCol, int delta)
 // **********************************
 
 void Dungeon::createPlayer() {
-  m_player = new Player(this);
+  m_player = new Player(this); // deleted in ~Dungeon
   setObjectPosition(m_player);
 }
 
@@ -309,14 +309,14 @@ void Dungeon::createGameObjects() {
   
   // Creates stairs to next level
   if (m_level != MAX_LEVEL) {
-    GameObject* stairs = new GameObject(this, '>', "Stairs");
+    GameObject* stairs = new GameObject(this, '>', "Stairs"); // deleted in resetLevel
     m_gameObjects.push_back(stairs);
     setObjectPosition(stairs);
   }
   
   // Creates golden idol if on last level
   if (m_level == MAX_LEVEL) {
-    GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol");
+    GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol"); // deleted in resetLevel
     m_gameObjects.push_back(goldenIdol);
     setObjectPosition(goldenIdol);
   }
@@ -362,7 +362,7 @@ Monster* Dungeon::generateRandomMonster() {
   int numChoices = m_level >= 3 ? 4 : 3;
   switch (randInt(numChoices)) {
     case 0:
-      return new Bogeyman(this);
+      return new Bogeyman(this); // deleted in resetLevel or destroyMonster
       break;
     case 1:
       return new Snakewoman(this);
@@ -382,7 +382,7 @@ Monster* Dungeon::generateRandomMonster() {
 GameObject* Dungeon::generateRandomGameObject() {
   switch (randInt(7)) {
     case 0:
-      return new Mace(this);
+      return new Mace(this); // deleted in resetLevel or pickUpGameObject
       break;
     case 1:
       return new ShortSword(this);
@@ -426,12 +426,16 @@ void Dungeon::nextLevel() {
 void Dungeon::resetLevel() {
   // Delete all Monsters
   while (!m_monsters.empty()) {
+    Object* toDelete = m_monsters.back();
     m_monsters.pop_back();
+    delete toDelete;
   }
   
   // Delete all GameObjects, including unpicked Weapons, Scrolls, Stairs, and Golden Idol
   while (!m_gameObjects.empty()) {
+    Object* toDelete = m_gameObjects.back();
     m_gameObjects.pop_back();
+    delete toDelete;
   }
   
   // Delete all Spaces
@@ -444,7 +448,9 @@ void Dungeon::resetLevel() {
   
   // Delete all Walls
   while (!m_walls.empty()) {
+    Object* toDelete = m_walls.back();
     m_walls.pop_back();
+    delete toDelete;
   }
 }
 
@@ -549,6 +555,18 @@ void Dungeon::destroyMonster(Monster* monster) {
   }
 }
 
+
+// ******************************
+// * GameObject Actions
+// ******************************
+
+void Dungeon::pickUpGameObject(GameObject* gameObject) {
+  for (int i = 0; i < m_gameObjects.size(); i++) {
+    if (m_gameObjects[i] == gameObject) {
+      m_gameObjects.erase(m_gameObjects.begin() + i);
+    }
+  }
+}
 
 // ******************************
 // * Win/Lose Game

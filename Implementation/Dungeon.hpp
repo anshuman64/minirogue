@@ -65,6 +65,9 @@ public:
   void moveMonsters();
   void destroyMonster(Monster* monster);
   
+  // GameObject Actions
+  void pickUpGameObject(GameObject* gameObject);
+  
   // Win/Lose Game
   void endGame(string descrption);
   

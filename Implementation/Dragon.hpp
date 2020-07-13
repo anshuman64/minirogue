@@ -55,7 +55,7 @@ public:
     if (!isOverGameObject()) {
       switch (randInt(5)) {
         case 0:
-          return new TeleportationScroll(getDungeon()); // deleted in Dungeon or Player (if picked up)
+          return new TeleportationScroll(getDungeon()); // deleted in Dungeon::resetLevel or Dungeon::pickUpGameObject
           break;
         case 1:
           return new HealthScroll(getDungeon());
