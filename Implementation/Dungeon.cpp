@@ -106,7 +106,7 @@ void Dungeon::createWalls() {
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
       Wall* newWall = new Wall(this, i, j); // deleted in resetLevel
-      m_walls.push_back(newWall);
+      m_walls[i][j] = newWall;
       m_maze[i][j] = newWall;
     }
   }
@@ -438,19 +438,15 @@ void Dungeon::resetLevel() {
     delete toDelete;
   }
   
-  // Delete all Spaces
+  // Delete all Spaces and Walls
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
       delete m_spaces[i][j];
       m_spaces[i][j] = nullptr;
+      
+      delete m_walls[i][j];
+      m_walls[i][j] = nullptr;
     }
-  }
-  
-  // Delete all Walls
-  while (!m_walls.empty()) {
-    Object* toDelete = m_walls.back();
-    m_walls.pop_back();
-    delete toDelete;
   }
 }
 

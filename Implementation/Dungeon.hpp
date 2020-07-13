@@ -79,7 +79,7 @@ private:
   
   Player*             m_player;
   Space*              m_spaces[NUM_ROWS][NUM_COLS];
-  vector<Wall*>       m_walls;
+  Wall*               m_walls[NUM_ROWS][NUM_COLS];
   vector<Monster*>    m_monsters;
   vector<GameObject*> m_gameObjects;
   
