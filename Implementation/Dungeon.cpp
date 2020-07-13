@@ -27,7 +27,7 @@ using namespace std;
 // * Constructor
 // ******************************
 
-Dungeon::Dungeon() : m_level(0), is_gameOver(false) {
+Dungeon::Dungeon() : m_level(0), is_gameOver(false), m_player(nullptr) {
   // WARNING: Has to be called in this order!
   createWalls();
   createSpaces();
@@ -102,6 +102,7 @@ bool Dungeon::isMonstersRemaining() {
 // ******************************
 
 void Dungeon::createWalls() {
+  // Create a wall for every space in the level
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
       Wall* newWall = new Wall(this, i, j);
@@ -119,109 +120,108 @@ void Dungeon::createSpaces() {
     }
   }
   
-  vector<vector<int>> rooms;
+  vector<vector<int>> rooms; // vector of rooms in the format: {startRow, startCol, endRow-1, endCol-1}
   
   // Generate non-overlapping rooms
-  createRooms(rooms, 300); // TODO: revert
+  createRooms(rooms);
   
-  int distances[rooms.size()][rooms.size()];
-  int corridorTypes[rooms.size()][rooms.size()];
+  int corridorTypes[rooms.size()][rooms.size()]; // 2D array to store direction of corridor between rooms
   
-  for (int i = 0; i < rooms.size()-1; i++) {
-    for (int j = i+1; j < rooms.size(); j++) {
-      // Determine if corridor is possible from room i to room j
-      int distance = NUM_COLS;
-      int corridorType = -1;
-      isCorridorType(distance, corridorType, rooms, i, j, 0, 0, 1, 7, 2);
-      isCorridorType(distance, corridorType, rooms, i, j, 2, 0, 1, 6, 3);
-      isCorridorType(distance, corridorType, rooms, i, j, 1, 1, 0, 0, 5);
-      isCorridorType(distance, corridorType, rooms, i, j, 3, 1, 0, 1, 4);
-      distances[i][j] = distance;
-      corridorTypes[i][j] = corridorType;
-      
-      // Determine if corridor is possible from room j to room i
-      distance = NUM_COLS;
-      corridorType = -1;
-      isCorridorType(distance, corridorType, rooms, j, i, 0, 0, 1, 7, 2);
-      isCorridorType(distance, corridorType, rooms, j, i, 2, 0, 1, 6, 3);
-      isCorridorType(distance, corridorType, rooms, j, i, 1, 1, 0, 0, 5);
-      isCorridorType(distance, corridorType, rooms, j, i, 3, 1, 0, 1, 4);
-      distances[j][i] = distance;
-      corridorTypes[j][i] = corridorType;
+  // Initialize values for distances and corridorTypes
+  for (int x = 0; x < rooms.size(); x++) {
+    for (int y = 0; y < rooms.size(); y++) {
+      corridorTypes[x][y] = -1;
     }
   }
   
+  // Loop through every combination of rooms in both directions
   for (int x = 0; x < rooms.size(); x++) {
-    int corridorType = -1;
-    
     for (int y = 0; y < rooms.size(); y++) {
-      if (x == y) {
+      // If room is the same or corridor has already been made, continue
+      if (x == y or corridorTypes[x][y] == -2) {
         continue;
       }
       
-      if (corridorTypes[x][y] > 0) {
-        corridorType = corridorTypes[x][y];
-        
-        // Avoid creating corridor to the same room
-        distances[y][x] = NUM_COLS;
-        corridorTypes[y][x] = -1;
-      }
+      int corridorType = -1;
       
-      switch (corridorType) {
-        case 0:
-          createCorridors(rooms, rooms[x][0], rooms[x][1], false, -1);
-          break;
-        case 1:
-          createCorridors(rooms, rooms[x][0], rooms[x][3], false, -1);
-          break;
-        case 2:
-          createCorridors(rooms, rooms[x][0], rooms[x][3], true, 1);
-          break;
-        case 3:
-          createCorridors(rooms, rooms[x][2], rooms[x][3], true, 1);
-          break;
-        case 4:
-          createCorridors(rooms, rooms[x][2], rooms[x][3], false, 1);
-          break;
-        case 5:
-          createCorridors(rooms, rooms[x][2], rooms[x][1], false, 1);
-          break;
-        case 6:
-          createCorridors(rooms, rooms[x][2], rooms[x][1], true, -1);
-          break;
-        case 7:
-          createCorridors(rooms, rooms[x][0], rooms[x][1], true, -1);
-          break;
+      // Determine if corridor is possible from room x to y
+      isCorridorType(corridorType, rooms, x, y, 0, 0, 1, 7, 2);
+      isCorridorType(corridorType, rooms, x, y, 2, 0, 1, 6, 3);
+      isCorridorType(corridorType, rooms, x, y, 1, 1, 0, 0, 5);
+      isCorridorType(corridorType, rooms, x, y, 3, 1, 0, 1, 4);
+      
+      // If corridor is possible...
+      if (corridorType > 0) {
+        // Avoid creating corridor to the same room
+        corridorTypes[y][x] = -2;
+        
+        // Create corridor between x and y
+        switch (corridorType) {
+          case 0:
+            // Create corridor from top-left corner going up
+            createCorridors(rooms[x][0], rooms[x][1], false, -1);
+            break;
+          case 1:
+            // Create corridor from top-right corner going up
+            createCorridors(rooms[x][0], rooms[x][3], false, -1);
+            break;
+          case 2:
+            // Create corridor from top-right corner going right
+            createCorridors(rooms[x][0], rooms[x][3], true, 1);
+            break;
+          case 3:
+            // Create corridor from bottom-right corner going right
+            createCorridors(rooms[x][2], rooms[x][3], true, 1);
+            break;
+          case 4:
+            // Create corridor from bottom-right corner going down
+            createCorridors(rooms[x][2], rooms[x][3], false, 1);
+            break;
+          case 5:
+            // Create corridor from bottom-left corner going down
+            createCorridors(rooms[x][2], rooms[x][1], false, 1);
+            break;
+          case 6:
+            // Create corridor from bottom-left corner going left
+            createCorridors(rooms[x][2], rooms[x][1], true, -1);
+            break;
+          case 7:
+            // Create corridor from top-left corner going left
+            createCorridors(rooms[x][0], rooms[x][1], true, -1);
+            break;
+        }
       }
     }
   }
 }
 
-void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
+// Creates non-overlapping rectangular rooms by brute-forcing generation of rectangles and seeing if they are valid
+void Dungeon::createRooms(vector<vector<int>> &rooms) {
   int totalArea = 0;
-  int MIN_ROW_DIM = 5;
-  int MIN_COL_DIM = 7;
   int tries = 0;
   
-  while(totalArea < desiredArea and tries < 10000) {
-    tries++;
+  while(totalArea < DESIRED_AREA and tries < 10000) {
+    tries++; // Increase # of tries
     int startRow = randInt(NUM_ROWS-2-MIN_ROW_DIM)+1;
     int startCol = randInt(NUM_COLS-2-MIN_COL_DIM)+1;
     int endRow = startRow+randInt(6)+MIN_ROW_DIM;
     int endCol = startCol+randInt(10)+MIN_COL_DIM;
     
+    // If room is on edge of level, invalidate room
     if (endRow > NUM_ROWS-1 or endCol > NUM_COLS-1) {
       continue;
     }
     
+    // If room overlaps with existing spaces, invalidate room
     for (int i = 0; i < NUM_ROWS; i++) {
       for (int j = 0; j < NUM_COLS; j++) {
         if(m_spaces[i][j] != nullptr and i >= startRow-1 and i <= endRow+1 and j >= startCol-1 and j <= endCol+1) {
-          goto cont;
+          goto cont; // "continue;" would break out of for loop, not while loop
         }
       }
     }
 
+    // Else, create room
     rooms.push_back({startRow, startCol, endRow-1, endCol-1});
     for (int i = startRow; i < endRow; i++) {
       for (int j = startCol; j < endCol; j++) {
@@ -231,24 +231,28 @@ void Dungeon::createRooms(vector<vector<int>> &rooms, int desiredArea) {
       }
     }
     
+    // Add room area to total area
     totalArea += (endRow-startRow) * (endCol-startCol);
     cont:;
   }
 }
-              
-void Dungeon::isCorridorType(int &distance, int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n) {
+
+// Determine if corridor is possible from room x to y by using their start & end rows/cols
+// a, b, c denote which row/cols to test for overlap
+// m and n denote corresponding corridorType (0 to 7 clockwise from top-left corner of room)
+// Store the distance and corridorType into variables
+void Dungeon::isCorridorType(int &corridorType, vector<vector<int>> rooms, int x, int y, int a, int b, int c, int m, int n) {
   if (rooms[x][a] >= rooms[y][b] and rooms[x][a] <= rooms[y][b+2]) {
     if (rooms[x][c] > rooms[y][c]) {
-      distance = rooms[x][c] - rooms[y][c+2];
       corridorType = m;
     } else {
-      distance = rooms[y][c] - rooms[x][c+2];
       corridorType = n;
     }
   }
 }
 
-void Dungeon::createCorridors(vector<vector<int>> &rooms, int curRow, int curCol, bool changeCol, int delta) {
+//
+void Dungeon::createCorridors(int curRow, int curCol, bool changeCol, int delta) {
   // Start by offsetting corner of room by one
   if (changeCol) {
     curCol += delta;
@@ -256,11 +260,14 @@ void Dungeon::createCorridors(vector<vector<int>> &rooms, int curRow, int curCol
     curRow += delta;
   }
   
+  // While cell isWall and is not on the edge of the level
   while (isWall(curRow, curCol) and curRow > 0 and curRow < NUM_ROWS and curCol > 0 and curCol < NUM_COLS) {
+    // Create a new space at current cell
     Space* newSpace = new Space(this, curRow, curCol);
     m_spaces[curRow][curCol] = newSpace;
     m_maze[curRow][curCol] = newSpace;
     
+    // Update cell in correct direction
     if (changeCol) {
       curCol += delta;
     } else {
