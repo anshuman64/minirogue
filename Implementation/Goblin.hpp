@@ -27,9 +27,7 @@ public:
     setWeapon(new ShortSword(dungeon));
   }
 
-  ~Goblin() {
-    delete getWeapon();
-  }
+  ~Goblin() {}
   
   
   // ******************************

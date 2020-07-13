@@ -26,9 +26,7 @@ public:
     setWeapon(new MagicFangs(dungeon));
   }
 
-  ~Snakewoman() {
-    delete getWeapon();
-  }
+  ~Snakewoman() {}
   
   
   // ******************************

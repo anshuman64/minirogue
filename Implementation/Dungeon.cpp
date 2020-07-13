@@ -98,7 +98,7 @@ bool Dungeon::isMonstersRemaining() {
 
 
 // ******************************
-// * Helpers - Create Level
+// * Helpers - Create Rooms
 // ******************************
 
 void Dungeon::createWalls() {
@@ -276,6 +276,11 @@ void Dungeon::createCorridors(int curRow, int curCol, bool changeCol, int delta)
   }
 }
 
+
+// **********************************
+// * Helpers - Create Level - Other
+// **********************************
+
 void Dungeon::createPlayer() {
   m_player = new Player(this);
   setObjectPosition(m_player);
@@ -292,6 +297,8 @@ void Dungeon::createMonsters() {
 }
 
 void Dungeon::createGameObjects() {
+  
+ // Generate random GameObjects
   int numGameObjects = randInt(2) + m_level;
   
   for (int i = 0; i < numGameObjects; i++) {
@@ -307,7 +314,7 @@ void Dungeon::createGameObjects() {
     setObjectPosition(stairs);
   }
   
-  // Creates golden idol
+  // Creates golden idol if on last level
   if (m_level == MAX_LEVEL) {
     GameObject* goldenIdol = new GameObject(this, '&', "Golden Idol");
     m_gameObjects.push_back(goldenIdol);
@@ -315,25 +322,33 @@ void Dungeon::createGameObjects() {
   }
 }
 
+// Sets position for Object
 void Dungeon::setObjectPosition(Object* object) {
   int posRow = -1;
   int posCol = -1;
+  
+  // Generate random position and set Object's position accordingly
   generateRandomPosition(object, posRow, posCol);
   object->setPosition(posRow, posCol);
   
+  // If Object is GameObject and there is already an Actor on the space...
   if (object->isGameObject() and isActor(posRow, posCol)) {
+    // Set Actor's overGameObject to GameObject
     Actor* actor = (Actor*)getObject(posRow, posCol);
     actor->setOverGameObject((GameObject*)object);
   } else {
+    // Set maze's position to object
     m_maze[posRow][posCol] = object;
   }
 }
 
+// Generates random valid position for object and stores in posRow, posCol
 void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {
   while(true) {
     posRow = randInt(NUM_ROWS);
     posCol = randInt(NUM_COLS);
     
+    // If cell is not Wall, Actor on Actor, or GameObject on GameObject, return as valid
     if (!isWall(posRow, posCol) and (
       (object->isActor() and !isActor(posRow, posCol)) or
       (object->isGameObject() and !isGameObject(posRow, posCol)) )) {
@@ -342,8 +357,9 @@ void Dungeon::generateRandomPosition(Object* object, int &posRow, int &posCol) {
   }
 }
 
+// Generates a random monster. Dragons only available level 3+.
 Monster* Dungeon::generateRandomMonster() {
-  int numChoices = m_level >=3 ? 4 : 3;
+  int numChoices = m_level >= 3 ? 4 : 3;
   switch (randInt(numChoices)) {
     case 0:
       return new Bogeyman(this);
@@ -362,6 +378,7 @@ Monster* Dungeon::generateRandomMonster() {
   return new Bogeyman(this);
 }
 
+// Generates random GameObject. Teleportation Scroll, Magic Fangs, and Magic Axe only available through Monster drops.
 GameObject* Dungeon::generateRandomGameObject() {
   switch (randInt(7)) {
     case 0:
@@ -407,14 +424,17 @@ void Dungeon::nextLevel() {
 }
 
 void Dungeon::resetLevel() {
+  // Delete all Monsters
   while (!m_monsters.empty()) {
     m_monsters.pop_back();
   }
   
+  // Delete all GameObjects, including unpicked Weapons, Scrolls, Stairs, and Golden Idol
   while (!m_gameObjects.empty()) {
     m_gameObjects.pop_back();
   }
   
+  // Delete all Spaces
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
       delete m_spaces[i][j];
@@ -422,9 +442,9 @@ void Dungeon::resetLevel() {
     }
   }
   
-  for (int i = 0; i < m_walls.size(); i++) {
-    delete m_walls[i];
-    m_walls[i] = nullptr;
+  // Delete all Walls
+  while (!m_walls.empty()) {
+    m_walls.pop_back();
   }
 }
 
@@ -435,12 +455,15 @@ void Dungeon::resetLevel() {
 
 void Dungeon::updateCurrentCell(Actor* actor, int curRow, int curCol) {
   if (actor->isOverGameObject()) {
+    // If Actor was overGameObject, replace overGameObject
     m_maze[curRow][curCol] = actor->getOverGameObject();
   } else {
+    // Else, set position to blank Space
     m_maze[curRow][curCol] = m_spaces[curRow][curCol];
   }
 }
 
+// Set space to Actor
 void Dungeon::updateNextCell(Actor* actor, int nextRow, int nextCol) {
   m_maze[nextRow][nextCol] = actor;
 }
@@ -452,6 +475,8 @@ void Dungeon::updateNextCell(Actor* actor, int nextRow, int nextCol) {
 
 void Dungeon::displayLevel() {
   clearScreen();
+  
+  // Loop through maze and display symbols of each Object
   for (int i = 0; i < NUM_ROWS; i++) {
     for (int j = 0; j < NUM_COLS; j++) {
       cout << m_maze[i][j]->getSymbol();
@@ -461,6 +486,7 @@ void Dungeon::displayLevel() {
   cout << endl;
 }
 
+// Display game actions
 void Dungeon::displayActions() {
   while(!m_actions.empty()) {
     cout << m_actions.front() << endl;
@@ -470,6 +496,7 @@ void Dungeon::displayActions() {
   cout << endl;
 }
 
+// Add game action to queue
 void Dungeon::addAction(string action) {
   if (!is_gameOver) {
     m_actions.push(action);
@@ -481,6 +508,7 @@ void Dungeon::addAction(string action) {
 // * Monster Actions
 // ******************************
 
+// Move all monsters (unless game is already over)
 void Dungeon::moveMonsters(){
   for (int i = 0; i < m_monsters.size(); i++) {
     m_monsters[i]->calculateMove();
@@ -491,10 +519,13 @@ void Dungeon::moveMonsters(){
   }
 }
 
+// Destroys defeated monster
 void Dungeon::destroyMonster(Monster* monster) {
   addAction(monster->getName() + " is defeated!");
   
+  // Loop through all monsters
   for (int i = 0; i < m_monsters.size(); i++) {
+    // When monster is found...
     if (m_monsters[i] == monster) {
       int rowPos = monster->getRowPosition();
       int colPos = monster->getColPosition();
@@ -502,13 +533,16 @@ void Dungeon::destroyMonster(Monster* monster) {
       // Check if monster drops game object
       GameObject* droppedGameObject = monster->dropGameObject();
       if (droppedGameObject != nullptr) {
+        // Set current cell to dropped GameObject
         m_gameObjects.push_back(droppedGameObject);
         m_maze[rowPos][colPos] = droppedGameObject;
         droppedGameObject->setPosition(rowPos, colPos);
       } else {
+        // Set current cell to GameObject (if Monster was onOverGameObject) or blank Space
         updateCurrentCell(monster, rowPos, colPos);
       }
       
+      // Delete monster
       m_monsters.erase(m_monsters.begin() + i);
       delete monster;
     }

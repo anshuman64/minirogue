@@ -21,7 +21,7 @@ class Actor : public Object {
 public:
   // Constructor
   Actor (Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity);
-  virtual ~Actor() {}
+  virtual ~Actor();
   
   // Accessors - Stats
   int getHP();

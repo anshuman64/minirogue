@@ -21,11 +21,7 @@ Player::Player(Dungeon* dungeon) : Actor(dungeon, '@', "Player", 20, 2, 2, 2), i
   setWeapon(startWeapon);
 }
 
-Player::~Player() {
-  for (int i = 0; i < m_inventory.size(); i++) {
-    delete m_inventory[i];
-  }
-}
+Player::~Player() {}
 
 // ******************************
 // * Actions

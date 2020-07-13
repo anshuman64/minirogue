@@ -17,6 +17,7 @@ const char ARROW_UP    = 'w';
 const char ARROW_DOWN  = 's';
 
 // Dungeon constants
+const int MAX_LEVEL = 4;
 const int NUM_ROWS = 18;
 const int NUM_COLS = 70;
 const int DESIRED_AREA = 300; // minimum area of free space rooms should cover
@@ -25,7 +26,6 @@ const int MIN_COL_DIM = 7; // minimum width of rooms
 
 // Player constants
 const int MAX_STATS = 99;
-const int MAX_LEVEL = 4;
 
 // Monster constants
 const int BOGEYMAN_SMELL_RANGE = 5;

@@ -27,9 +27,7 @@ public:
     setWeapon(new LongSword(dungeon));
   }
 
-  ~Dragon() {
-    delete getWeapon();
-  }
+  ~Dragon() {}
   
   
   // ******************************
