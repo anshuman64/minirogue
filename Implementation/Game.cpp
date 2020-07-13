@@ -87,6 +87,16 @@ void Game::play() {
           m_dungeon->endGame("Player quit the game.");
         }
         break;
+      case 'r':
+        // Attempt to restart game
+        cout << "Re-enter 'r' to restart or any other key to continue: ";
+        input = getCharacter();
+        if (input == 'r') {
+          m_dungeon->~Dungeon();
+          m_dungeon = new Dungeon();
+          play();
+        }
+        break;
       case 'c':
         // Cheat mode by maxing all stats
         m_dungeon->getPlayer()->godMode();
@@ -116,13 +126,22 @@ void Game::displayHelp() {
 
   cout << endl << "MiniRogue: Clear the dungeon and obtain the golden idol! Defeat monsters, find treasures, and descend deeper into the dungeon's depths." << endl << endl;
   
-  cout << "Keyboard Commands:" << "\t\t\t"  << "Game Symbols:" << endl;
-  cout << "w,a,s,d. Move player" << "\t\t"  << "@. Player" << endl;
-  cout << "e. Display inventory"  << "\t\t" << "B,D,G,S. Monsters" << endl;
-  cout << "f. Take action"  << "\t\t\t\t\t" << "). Weapon" << endl;
-  cout << "h. Display help"  << "\t\t\t\t " << "?. Scroll" << endl;
-  cout << "q. Quit game"  << "\t\t\t\t\t\t" << ">. Stairs" << endl;
-  cout << "c. Enter god mode"  << "\t\t\t " << "&. Golden Idol" << endl;
+  cout << "Keyboard Commands:" << endl;
+  cout << "w,a,s,d. Move player" << endl;
+  cout << "e. Display inventory" << endl;
+  cout << "f. Take action" << endl;
+  cout << "h. Display help" << endl;
+  cout << "q. Quit game" << endl;
+  cout << "r. Restart game" << endl;
+  cout << "c. Enter god mode" << endl;
+  cout << endl;
+  cout << "Game Symbols:" << endl;
+  cout << "@. Player" << endl;
+  cout << "B,D,G,S. Monsters" << endl;
+  cout << "). Weapon" << endl;
+  cout << "?. Scroll" << endl;
+  cout << ">. Stairs" << endl;
+  cout << "&. Golden Idol" << endl;
   
   cout << endl << "Press any key to continue: " << endl;
   

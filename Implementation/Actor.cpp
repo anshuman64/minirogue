@@ -19,7 +19,9 @@
 Actor::Actor(Dungeon* dungeon, char symbol, string name, int hp, int armor, int strength, int dexterity) : Object(dungeon, symbol, name), m_hp(hp), m_maxHP(hp), m_armor(armor), m_strength(strength), m_dexterity(dexterity), m_turnsAsleep(0), m_overGameObject(nullptr), m_weapon(nullptr) {}
 
 Actor::~Actor() {
-  delete m_weapon;
+  if (!isPlayer()) {
+    delete m_weapon;
+  }
 }
 
 
