@@ -2,7 +2,7 @@
 Dungeon action-adventure game based on UCLA CS32 Spring 2020 project spec by Professor Nachenberg
 
 ## To Play
-Download and run MiniRogue_Anshuman-Dewangan.exe
+Download the [ZIP](https://github.com/anshuman64/MiniRogue/releases/download/v1.0/MiniRogue_Anshuman-Dewangan.zip), extract, and double+click to run "MiniRogue_Anshuman-Dewangan"
 
 ## Gameplay Instructions
 Clear the dungeon and obtain the golden idol! Defeat monsters, find treasures, and descend deeper into the dungeon's depths.
