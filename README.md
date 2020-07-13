@@ -8,17 +8,18 @@ Download and run MiniRogue_Anshuman-Dewangan.exe
 Clear the dungeon and obtain the golden idol! Defeat monsters, find treasures, and descend deeper into the dungeon's depths.
 
 Keyboard Commands:
-w,a,s,d. Move player
-e. Display inventory
-f. Take action
-h. Display help
-q. Quit game
-c. Enter god mode
+- w,a,s,d. Move player
+- e. Display inventory
+- f. Take action
+- h. Display help
+- q. Quit game
+- r. Restart game
+- c. Enter god mode
 
 Game Symbols:
-@. Player
-B,D,G,S. Monsters
-). Weapon
-?. Scroll
->. Stairs
-&. Golden Idol
+- @. Player
+- B,D,G,S. Monsters
+- ). Weapon
+- ?. Scroll
+- \>. Stairs
+- &. Golden Idol
