@@ -90,7 +90,7 @@ void Player::calculateMove(char input) {
   // If next cell isGameObject, move Player onto GameObject
   else if (getDungeon()->isGameObject(nextRow, nextCol)) {
     move(curRow, curCol, nextRow, nextCol);
-    getDungeon()->addAction("Player moved " + directionString + " onto " + getOverGameObject()->getName() + ".");
+    getDungeon()->addAction("Player moved " + directionString + " onto " + getOverGameObject()->getName() + ". Press 'f' to take action.");
   }
 }
 

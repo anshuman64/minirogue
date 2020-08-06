@@ -160,6 +160,11 @@ void Actor::attack(Actor* attacker, Actor* defender) {
     int damagePoints = randInt(attacker->getStrength() + attackerWeapon->getDamage());
     defender->changeHP(-1 * damagePoints);
     actionString += "hits for " + to_string(damagePoints) + " damage.";
+    
+    if (defender->isPlayer()) {
+      actionString += " Move toward " + attacker->getName() + " to attack back!";
+    }
+    
     getDungeon()->addAction(actionString); // WARNING: Place here for proper action order
     
     // Determine if Magic Fangs put defender to sleep
