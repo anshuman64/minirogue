@@ -1,6 +1,8 @@
 # MiniRogue
 Dungeon action-adventure game based on UCLA CS32 Spring 2020 project spec by Professor Nachenberg. For macOS.
 
+![Alt](minirogue_screenshot.png)
+
 ## To Play
 Download the [ZIP](https://github.com/anshuman64/MiniRogue/releases/download/v1.0/MiniRogue_Anshuman-Dewangan.zip), extract, and right+click > Open "MiniRogue_Anshuman-Dewangan"
 
